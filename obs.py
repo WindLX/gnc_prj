@@ -251,7 +251,7 @@ def process_rinex_data(header, observation_data, rinex_data_list):
 
 if __name__ == "__main__":
     # 解析RINEX观测数据
-    header, observation_data = parse_rinex("./gnss_log_2024_12_07_16_26_41.24o")
+    header, observation_data = parse_rinex("./gnss_log_2024_12_13_11_31_47.24o")
 
     # 打印头部信息
     print(f"RINEX Version: {header.version}, Data Type: {header.data_type}")
@@ -262,7 +262,7 @@ if __name__ == "__main__":
     )
 
     # 读取RINEX导航文件
-    gps_rinex_file_path = "./brdc3420.24n"
+    gps_rinex_file_path = "./brdc3480.24n"
     gps_rinex_head, gps_rinex_data = read_rinex_nav(gps_rinex_file_path)
     gps_rinex_data_list = gps_rinex_data
 
@@ -310,13 +310,13 @@ if __name__ == "__main__":
     # 绘制接收机位置
     # Prepare data for plotting
     times = [pos[0] for pos in receiver_positions]
-    # times = times[:5]
+    times = times[30:60]
     x_coords = [pos[1][0] for pos in receiver_positions]
     y_coords = [pos[1][1] for pos in receiver_positions]
     z_coords = [pos[1][2] for pos in receiver_positions]
-    # x_coords = x_coords[:5]
-    # y_coords = y_coords[:5]
-    # z_coords = z_coords[:5]
+    x_coords = x_coords[30:60]
+    y_coords = y_coords[30:60]
+    z_coords = z_coords[30:60]
 
     # Create a DataFrame for seaborn
     data = pd.DataFrame({"Time": times, "X": x_coords, "Y": y_coords, "Z": z_coords})
