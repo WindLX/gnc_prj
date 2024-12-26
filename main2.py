@@ -181,14 +181,8 @@ def plot_gdop_histogram(df):
 def plot_coordinates(df):
     plt.figure(figsize=(10, 6))
 
-    plt.scatter(df["lon"], df["lat"], c="blue", label="Estimated Coordinates", s=10)
-    plt.scatter(
-        df["lon"].iloc[0],
-        df["lat"].iloc[0],
-        c="red",
-        label="True Coordinates",
-        s=50,
-    )
+    plt.plot(df["lon"], df["lat"], label="Estimated Coordinates", color="blue")
+    plt.plot(df["truth_lon"], df["truth_lat"], label="True Coordinates", color="red")
 
     plt.title("True vs Estimated Coordinates")
     plt.xlabel("Longitude")
@@ -266,8 +260,9 @@ def draw_satellite_tracks(satellite_position, max_gap=90):
 
 
 if __name__ == "__main__":
-    truth = Vector3(-289833.9300, -2756501.0600, 5725162.2200)
     nav_file = "./nav/brdc3490.24n"
+
+    file_index = 1
     obs_files = [
         "./data/1_Medium_Interference_Near_SAA_1525/gnss_log_2024_12_14_15_17_38.24o",
         "./data/2_Open_field_Lawn_1541/gnss_log_2024_12_14_15_28_53.24o",
@@ -277,9 +272,20 @@ if __name__ == "__main__":
         "./data/6_FootBall Field_1639/gnss_log_2024_12_14_16_32_45.24o",
         "./data/7_WayBackToSAA_1659/gnss_log_2024_12_14_16_49_34.24o",
     ]
-    obs_file = obs_files[1]
+    obs_file = obs_files[file_index]
 
-    estimation = PositionEstimation(truth, obs_file, step=1)
+    track_files = [
+        "./data/1_Medium_Interference_Near_SAA_1525/doc.kml",
+        "./data/2_Open_field_Lawn_1541/doc.kml",
+        "./data/3_Forest_1542/doc.kml",
+        "./data/4_LibraryBasement_1606/doc.kml",
+        "./data/5_DormArea_HighInterference_1620/doc.kml",
+        "./data/6_FootBall Field_1639/doc.kml",
+        "./data/7_WayBackToSAA_1659/doc.kml",
+    ]
+    track_file = track_files[file_index]
+
+    estimation = PositionEstimation(obs_file, track_file, step=1)
     observations = estimation.load_observation_data()
 
     evaluation_results = {
@@ -294,15 +300,20 @@ if __name__ == "__main__":
         "lat": [],
         "lon": [],
         "alt": [],
+        "truth_lat": [],
+        "truth_lon": [],
+        "truth_alt": [],
         "GDOP": [],
     }
 
     satellite_position = None
 
     for time, observation in tqdm(observations, desc="Processing Observations"):
-        satellite_info = estimation.extract_satellite_info(time, observation, nav_file)
+        satellite_info, truth_lla = estimation.extract_satellite_info(
+            time, observation, nav_file
+        )
         try:
-            estimation_result = estimation.estimate_position(satellite_info)
+            estimation_result = estimation.estimate_position(truth_lla, satellite_info)
         except ValueError as e:
             print(f"Error: {e}")
             continue
@@ -311,7 +322,7 @@ if __name__ == "__main__":
             continue
 
         estimation.draw_skymap(time, satellite_info)
-        estimation.log(time, satellite_info, estimation_result)
+        estimation.log(time, truth_lla, satellite_info, estimation_result)
 
         evaluation_results["time"].append(datetime(*time))
         evaluation_results["norm_error"].append(estimation_result[1]["norm_error"])
@@ -336,6 +347,10 @@ if __name__ == "__main__":
         evaluation_results["lat"].append(lla_position[0])
         evaluation_results["lon"].append(lla_position[1])
         evaluation_results["alt"].append(lla_position[2])
+
+        evaluation_results["truth_lat"].append(truth_lla[0])
+        evaluation_results["truth_lon"].append(truth_lla[1])
+        evaluation_results["truth_alt"].append(truth_lla[2])
 
         for sat_info in satellite_info:
             new_row = pd.DataFrame(

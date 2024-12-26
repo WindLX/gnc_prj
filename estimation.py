@@ -1,19 +1,20 @@
 from pathlib import Path
+from datetime import datetime
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 from model import Vector3
-from utils import ecef_to_lla, ecef_to_enu, Omegae_dot, c
+from utils import ecef_to_lla, ecef_to_enu, lla_to_ecef, Omegae_dot, c
 from rinex4 import RINEXNavigationData, RINEXObservationData, SatelliteSystem
-from datetime import datetime
+from kml import KML
 
 
 class PositionEstimation:
     def __init__(
         self,
-        truth: Vector3,
         obs_file: str,
+        track_file: str,
         epsilon: float = 1e-8,
         max_iterations: int = 1000,
         threshold: float = 0,
@@ -21,8 +22,9 @@ class PositionEstimation:
         log_dir: str = "log",
         figure_dir: str = "figure",
     ):
-        self.truth = truth
         self.obs_file = obs_file
+        self.track = KML(track_file)
+        self.track.parse()
         self.estimate_epsilon = epsilon
         self.max_iterations = max_iterations
         self.elevation_threshold = threshold
@@ -34,20 +36,23 @@ class PositionEstimation:
         obs = RINEXObservationData.read_observation_file(self.obs_file)
         return obs[:: self.step]
 
+    def get_truth_position(self, time: list) -> Vector3:
+        return self.track.interpolate_at(datetime(*time))
+
     def extract_satellite_info(
         self,
         time: list[float],
         observation: list[RINEXObservationData],
         nav_file: str,
         target_system: SatelliteSystem = SatelliteSystem.GPS,
-    ) -> list[dict]:
+    ) -> tuple[list[dict], Vector3]:
         info = []
 
         target_satellites = [
             data for data in observation if data.system == target_system
         ]
 
-        local_pos = ecef_to_lla(self.truth)
+        local_pos = self.get_truth_position(time)
         _head, rinex_nav = RINEXNavigationData.read_rinex_nav(nav_file, time)
         sv_info = RINEXNavigationData.rinex_nav_to_sv(rinex_nav, time)
 
@@ -75,10 +80,10 @@ class PositionEstimation:
                         "obs_data": data,
                     }
                 )
-        return info
+        return info, local_pos
 
     def estimate_position(
-        self, estimation_data: list[dict], data_to_use: str = "c1"
+        self, truth_lla: Vector3, estimation_data: list[dict], data_to_use: str = "c1"
     ) -> tuple[np.ndarray, dict]:
         length = len(estimation_data)
         if length < 4:
@@ -133,10 +138,10 @@ class PositionEstimation:
                     "Maximum number of iterations reached without convergence"
                 )
 
-            truth_lla = ecef_to_lla(self.truth)
+            truth_ecef = lla_to_ecef(truth_lla)
             estimated_lla = ecef_to_lla(Vector3(*x[:3]))
 
-            norm_error = np.linalg.norm(x[:3] - self.truth.numpy())
+            norm_error = np.linalg.norm(x[:3] - truth_ecef.numpy())
             horizontal_error = np.array(
                 [
                     2 * np.pi * 6356909 / 360 * (estimated_lla[0] - truth_lla[0]),
@@ -183,6 +188,7 @@ class PositionEstimation:
     def log(
         self,
         time: list,
+        truth_lla: Vector3,
         satellite_info: list[dict],
         estimation_result: tuple[np.ndarray, dict],
     ):
@@ -194,13 +200,15 @@ class PositionEstimation:
         log_path = Path(self.log_dir) / file_name
         log_path.parent.mkdir(parents=True, exist_ok=True)
 
+        truth_ecef = lla_to_ecef(truth_lla)
+
         with log_path.open("w") as f:
             f.write(f"Time: {formatted_time} UTC\n")
             f.write(f"Truth Position(ECEF):\n")
-            f.write(f"  X: {self.truth.x} meters\n")
-            f.write(f"  Y: {self.truth.y} meters\n")
-            f.write(f"  Z: {self.truth.z} meters\n")
-            truth_lla = ecef_to_lla(self.truth)
+            f.write(f"  X: {truth_ecef.x} meters\n")
+            f.write(f"  Y: {truth_ecef.y} meters\n")
+            f.write(f"  Z: {truth_ecef.z} meters\n")
+
             f.write(f"Truth Position(LLA):\n")
             f.write(f"  Latitude: {truth_lla[0]} degrees\n")
             f.write(f"  Longitude: {truth_lla[1]} degrees\n")
@@ -209,6 +217,7 @@ class PositionEstimation:
             f.write(f"  X: {x[0]} meters\n")
             f.write(f"  Y: {x[1]} meters\n")
             f.write(f"  Z: {x[2]} meters\n")
+
             estimated_lla = ecef_to_lla(Vector3(*x[:3]))
             f.write(f"Estimated Position(LLA):\n")
             f.write(f"  Latitude: {estimated_lla[0]} degrees\n")
