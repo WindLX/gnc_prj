@@ -8,8 +8,9 @@ import pandas as pd
 from tqdm import tqdm
 
 from model import Vector3
-from utils import ecef_to_lla
+from utils import ecef_to_lla, bias
 from estimation import PositionEstimation
+from map import Map, PathStyle
 
 
 def evalution(df):
@@ -181,20 +182,78 @@ def plot_gdop_histogram(df):
 def plot_coordinates(df):
     plt.figure(figsize=(10, 6))
 
-    plt.scatter(df["lon"], df["lat"], c="blue", label="Estimated Coordinates", s=10)
-    plt.scatter(
-        df["lon"].iloc[0],
-        df["lat"].iloc[0],
-        c="red",
-        label="True Coordinates",
-        s=50,
-    )
+    plt.plot(df["lon"], df["lat"], label="Estimated Coordinates", color="blue")
+    plt.plot(df["truth_lon"], df["truth_lat"], label="True Coordinates", color="red")
 
     plt.title("True vs Estimated Coordinates")
     plt.xlabel("Longitude")
     plt.ylabel("Latitude")
 
     plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_map(df):
+    map = Map()
+
+    estimated_locations = [
+        Vector3(row["lon"], row["lat"], 0) for _, row in df.iterrows()
+    ]
+    true_locations = [
+        Vector3(row["truth_lon"], row["truth_lat"], 0) for _, row in df.iterrows()
+    ]
+
+    path_styles = [
+        PathStyle(
+            weight=2,
+            color="0x0000FF",
+            transparency=1,
+            fillcolor="",
+            fillTransparency=0.5,
+        ),
+        PathStyle(
+            weight=2,
+            color="0xFF0000",
+            transparency=1,
+            fillcolor="",
+            fillTransparency=0.5,
+        ),
+    ]
+    estimated_uri = map.construct_paths_uri([(estimated_locations, path_styles[0])])
+    true_uri = map.construct_paths_uri([(true_locations, path_styles[1])])
+
+    estimated_map_image = map.get_map_image(estimated_uri)
+    true_map_image = map.get_map_image(true_uri)
+
+    with open("estimated_map.png", "wb") as f:
+        f.write(estimated_map_image)
+
+    with open("true_map.png", "wb") as f:
+        f.write(true_map_image)
+
+
+def plot_ecef_coordinates(df):
+    plt.figure(figsize=(14, 8))
+
+    plt.subplot(3, 1, 1)
+    sns.lineplot(data=df, x="time", y="ecef_x", label="ECEF X")
+    plt.title("ECEF X Coordinate Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("ECEF X (meters)")
+
+    plt.subplot(3, 1, 2)
+    sns.lineplot(data=df, x="time", y="ecef_y", label="ECEF Y")
+    plt.title("ECEF Y Coordinate Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("ECEF Y (meters)")
+
+    plt.subplot(3, 1, 3)
+    sns.lineplot(data=df, x="time", y="ecef_z", label="ECEF Z")
+    plt.title("ECEF Z Coordinate Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("ECEF Z (meters)")
 
     plt.tight_layout()
     plt.show()
@@ -241,11 +300,33 @@ def draw_satellite_tracks(satellite_position, max_gap=90):
 
 
 if __name__ == "__main__":
-    truth = Vector3(-289833.9300, -2756501.0600, 5725162.2200)
-    nav_file = "brdc2750.22n"
-    obs_file = "bake2750.22o"
+    nav_file = "./nav/brdc3490.24n"
 
-    estimation = PositionEstimation(truth, obs_file, step=60)
+    file_index = 5
+
+    obs_files = [
+        "./data/1_Medium_Interference_Near_SAA_1525/gnss_log_2024_12_14_15_17_38.24o",
+        "./data/2_Open_field_Lawn_1541/gnss_log_2024_12_14_15_28_53.24o",
+        "./data/3_Forest_1542/gnss_log_2024_12_14_15_46_31.24o",
+        "./data/4_LibraryBasement_1606/gnss_log_2024_12_14_16_02_14.24o",
+        "./data/5_DormArea_HighInterference_1620/gnss_log_2024_12_14_16_14_30.24o",
+        "./data/6_FootBall Field_1639/gnss_log_2024_12_14_16_32_45.24o",
+        "./data/7_WayBackToSAA_1659/gnss_log_2024_12_14_16_49_34.24o",
+    ]
+    obs_file = obs_files[file_index]
+
+    track_files = [
+        "./data/1_Medium_Interference_Near_SAA_1525/doc.kml",
+        "./data/2_Open_field_Lawn_1541/doc.kml",
+        "./data/3_Forest_1542/doc.kml",
+        "./data/4_LibraryBasement_1606/doc.kml",
+        "./data/5_DormArea_HighInterference_1620/doc.kml",
+        "./data/6_FootBall Field_1639/doc.kml",
+        "./data/7_WayBackToSAA_1659/doc.kml",
+    ]
+    track_file = track_files[file_index]
+
+    estimation = PositionEstimation(obs_file, track_file, step=1, threshold=15)
     observations = estimation.load_observation_data()
 
     evaluation_results = {
@@ -260,16 +341,29 @@ if __name__ == "__main__":
         "lat": [],
         "lon": [],
         "alt": [],
+        "truth_lat": [],
+        "truth_lon": [],
+        "truth_alt": [],
         "GDOP": [],
     }
 
     satellite_position = None
 
     for time, observation in tqdm(observations, desc="Processing Observations"):
-        satellite_info = estimation.extract_satellite_info(time, observation, nav_file)
-        estimation_result = estimation.estimate_position(satellite_info, "p1")
+        satellite_info, truth_lla = estimation.extract_satellite_info(
+            time, observation, nav_file
+        )
+        try:
+            estimation_result = estimation.estimate_position(truth_lla, satellite_info)
+        except ValueError as e:
+            print(f"Error: {e}")
+            continue
+        except RuntimeError as e:
+            print(f"Error: {e}")
+            continue
+
         estimation.draw_skymap(time, satellite_info)
-        estimation.log(time, satellite_info, estimation_result)
+        estimation.log(time, truth_lla, satellite_info, estimation_result)
 
         evaluation_results["time"].append(datetime(*time))
         evaluation_results["norm_error"].append(estimation_result[1]["norm_error"])
@@ -291,9 +385,13 @@ if __name__ == "__main__":
         evaluation_results["ecef_z"].append(ecef_position[2])
 
         lla_position = ecef_to_lla(Vector3.from_list(ecef_position))
-        evaluation_results["lat"].append(lla_position[0])
-        evaluation_results["lon"].append(lla_position[1])
+        evaluation_results["lat"].append(lla_position[0] + bias[1])
+        evaluation_results["lon"].append(lla_position[1] + bias[0])
         evaluation_results["alt"].append(lla_position[2])
+
+        evaluation_results["truth_lat"].append(truth_lla[0] + bias[1])
+        evaluation_results["truth_lon"].append(truth_lla[1] + bias[0])
+        evaluation_results["truth_alt"].append(truth_lla[2])
 
         for sat_info in satellite_info:
             new_row = pd.DataFrame(
@@ -314,9 +412,11 @@ if __name__ == "__main__":
     df = pd.DataFrame(evaluation_results)
     sns.set_theme(style="whitegrid")
     evalution(df)
-    plot_error(df)
-    plot_error_histograms(df)
+    plot_map(df)
+    # plot_error(df)
+    # plot_error_histograms(df)
     plot_coordinates(df)
-    plot_gdop(df)
-    plot_gdop_histogram(df)
-    draw_satellite_tracks(satellite_position)
+    # plot_ecef_coordinates(df)
+    # plot_gdop(df)
+    # plot_gdop_histogram(df)
+    # draw_satellite_tracks(satellite_position)
