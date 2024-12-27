@@ -31,6 +31,8 @@ class PositionEstimation:
         self.step = step
         self.log_dir = log_dir
         self.figure_dir = figure_dir
+        self.estimate_lla = None
+        self.Inon_data = None
 
     def load_observation_data(self):
         obs = RINEXObservationData.read_observation_file(self.obs_file)
@@ -54,6 +56,8 @@ class PositionEstimation:
 
         local_pos = self.get_truth_position(time)
         _head, rinex_nav = RINEXNavigationData.read_rinex_nav(nav_file, time)
+        self.Inon_data = _head[1]
+        # print(f"Iono: {self.Inon_data}")
         sv_info = RINEXNavigationData.rinex_nav_to_sv(rinex_nav, time)
 
         for data in target_satellites:
@@ -81,9 +85,44 @@ class PositionEstimation:
                     }
                 )
         return info, local_pos
+    
+    def calculate_iono_delay(
+            self, time: list[float], satellite_info: list[dict]
+    ) -> float:
+        length = len(satellite_info)
+        dltR = np.zeros(length)
+        for idx, data in enumerate(satellite_info):
+            az = data["azimuth"]
+            el = data["elevation"]
+            # print(f"PRN: {data['prn']}, Azimuth: {az}, Elevation: {el}")
+            el_ = np.clip(el, np.deg2rad(5), np.deg2rad(90))
+            Latitude = np.deg2rad(self.estimate_lla[0]) + (0.0137*el_ - 0.11) / np.cos(el)
+            Longitude = np.deg2rad(self.estimate_lla[1]) + Latitude * np.sin(az) / np.cos(Latitude)
+            Latitude = Latitude + (0.064 * np.cos(Longitude - 1.617))
+            # print(Latitude)
+        
+            Localtime = datetime(*time) - datetime(2024, 12, 14, 15, 0, 0)
+            Localtime = Localtime.total_seconds() % 86400
+
+            A = self.Inon_data[0] + self.Inon_data[1] * Latitude + self.Inon_data[2] * Latitude**2 + self.Inon_data[3] * Latitude**3
+            P = self.Inon_data[4] + self.Inon_data[5] * Latitude + self.Inon_data[6] * Latitude**2 + self.Inon_data[7] * Latitude**3
+            if A < 0:
+                A = 0
+            
+            x = 2 * np.pi * (Localtime - 50400) / P
+
+            Iion = 5e-9
+            if x >= -1.57 and x <= 1.57:
+                dltR[idx] = Iion + A * np.cos(x)
+            else:
+                dltR[idx] = Iion
+        dltR = dltR * c
+        # print(f"Iono: {dltR}, A: {A}, P: {P}, x: {x}, Localtime: {Localtime}")
+        return dltR
+
 
     def estimate_position(
-        self, truth_lla: Vector3, estimation_data: list[dict], data_to_use: str = "c1"
+        self, time: list[float], truth_lla: Vector3, estimation_data: list[dict], data_to_use: str = "c1"
     ) -> tuple[np.ndarray, dict]:
         length = len(estimation_data)
         if length < 4:
@@ -101,11 +140,20 @@ class PositionEstimation:
             delta_x = np.ones(3)
             delta_rho = np.zeros(length)
 
+            tz = 77.6e-6 * (101725 / 294.15) * 43000 / 5
+            td = 0.373 * (2179 / 294.15**2) * 12000 / 5
+            tropo =  (tz + td) * 1.001 / np.sqrt(0.002001 + np.sin(d["elevation"])**2) 
+            # print(f"Tropo: {tropo}")
+
             # r = pseudo + c * delta_t
-            r = data[:, 4] + c * data[:, 3]
+            r = data[:, 4] + c * data[:, 3] - tropo * 0.01
+            if self.estimate_lla:
+                dR = self.calculate_iono_delay(time, estimation_data)
+                r = r - dR
+                # print(f"r: {r}, dR: {dR}")
 
             for i in range(length):
-                Omega_tau = -Omegae_dot * r[i] / c
+                Omega_tau = -1 * Omegae_dot * r[i] / c
                 R_sagnac = np.array(
                     [
                         [np.cos(Omega_tau), np.sin(Omega_tau), 0],
@@ -114,6 +162,8 @@ class PositionEstimation:
                     ]
                 )
                 data[i, :3] = data[i, :3] @ R_sagnac.T
+
+
 
             iteration = 0
             while (
@@ -140,6 +190,7 @@ class PositionEstimation:
 
             truth_ecef = lla_to_ecef(truth_lla)
             estimated_lla = ecef_to_lla(Vector3(*x[:3]))
+            self.estimate_lla = estimated_lla
 
             norm_error = np.linalg.norm(x[:3] - truth_ecef.numpy())
             horizontal_error = np.array(
