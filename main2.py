@@ -313,7 +313,7 @@ if __name__ == "__main__":
             time, observation, nav_file
         )
         try:
-            estimation_result = estimation.estimate_position(truth_lla, satellite_info)
+            estimation_result = estimation.estimate_position(time, truth_lla, satellite_info)
         except ValueError as e:
             print(f"Error: {e}")
             continue
