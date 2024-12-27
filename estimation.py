@@ -5,9 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from model import Vector3
-from utils import ecef_to_lla, ecef_to_enu, lla_to_ecef, Omegae_dot, c
-from rinex4 import RINEXNavigationData, RINEXObservationData, SatelliteSystem
 from kml import KML
+from rinex4 import RINEXNavigationData, RINEXObservationData, SatelliteSystem
+from utils import ecef_to_lla, ecef_to_enu, lla_to_ecef, Omegae_dot, c
 
 
 class PositionEstimation:
@@ -105,7 +105,7 @@ class PositionEstimation:
             r = data[:, 4] + c * data[:, 3]
 
             for i in range(length):
-                Omega_tau = Omegae_dot * r[i] / c
+                Omega_tau = -Omegae_dot * r[i] / c
                 R_sagnac = np.array(
                     [
                         [np.cos(Omega_tau), np.sin(Omega_tau), 0],
