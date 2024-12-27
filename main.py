@@ -302,7 +302,7 @@ def draw_satellite_tracks(satellite_position, max_gap=90):
 if __name__ == "__main__":
     nav_file = "./nav/brdc3490.24n"
 
-    file_index = 5
+    file_index = 1
 
     obs_files = [
         "./data/1_Medium_Interference_Near_SAA_1525/gnss_log_2024_12_14_15_17_38.24o",
@@ -326,7 +326,7 @@ if __name__ == "__main__":
     ]
     track_file = track_files[file_index]
 
-    estimation = PositionEstimation(obs_file, track_file, step=1, threshold=15)
+    estimation = PositionEstimation(obs_file, track_file, step=1, threshold=8)
     observations = estimation.load_observation_data()
 
     evaluation_results = {
@@ -354,7 +354,7 @@ if __name__ == "__main__":
             time, observation, nav_file
         )
         try:
-            estimation_result = estimation.estimate_position(truth_lla, satellite_info)
+            estimation_result = estimation.estimate_position(time, truth_lla, satellite_info)
         except ValueError as e:
             print(f"Error: {e}")
             continue

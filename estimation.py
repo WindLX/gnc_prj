@@ -95,7 +95,7 @@ class PositionEstimation:
             az = data["azimuth"]
             el = data["elevation"]
             # print(f"PRN: {data['prn']}, Azimuth: {az}, Elevation: {el}")
-            el_ = np.clip(el, 5, 90)
+            el_ = np.clip(el, np.deg2rad(5), np.deg2rad(90))
             Latitude = np.deg2rad(self.estimate_lla[0]) + (0.0137*el_ - 0.11) / np.cos(el)
             Longitude = np.deg2rad(self.estimate_lla[1]) + Latitude * np.sin(az) / np.cos(Latitude)
             Latitude = Latitude + (0.064 * np.cos(Longitude - 1.617))
@@ -140,15 +140,20 @@ class PositionEstimation:
             delta_x = np.ones(3)
             delta_rho = np.zeros(length)
 
+            tz = 77.6e-6 * (101725 / 294.15) * 43000 / 5
+            td = 0.373 * (2179 / 294.15**2) * 12000 / 5
+            tropo =  (tz + td) * 1.001 / np.sqrt(0.002001 + np.sin(d["elevation"])**2) 
+            # print(f"Tropo: {tropo}")
+
             # r = pseudo + c * delta_t
-            r = data[:, 4] + c * data[:, 3]
+            r = data[:, 4] + c * data[:, 3] - tropo * 0.01
             if self.estimate_lla:
                 dR = self.calculate_iono_delay(time, estimation_data)
                 r = r - dR
                 # print(f"r: {r}, dR: {dR}")
 
             for i in range(length):
-                Omega_tau = -Omegae_dot * r[i] / c
+                Omega_tau = -1 * Omegae_dot * r[i] / c
                 R_sagnac = np.array(
                     [
                         [np.cos(Omega_tau), np.sin(Omega_tau), 0],
