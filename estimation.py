@@ -110,6 +110,12 @@ class PositionEstimation:
                 )
                 data[i, :3] = data[i, :3] @ R_sagnac.T
 
+            #     # 相对论效应修正
+            #     ecef = data[i, :3]
+            #     r_sat = np.linalg.norm(ecef)
+            #     rel_correction = -2 * np.dot(ecef, x[:3]) / c**2
+            #     r[i] += rel_correction
+
             iteration = 0
             while (
                 np.linalg.norm(delta_x) > self.estimate_epsilon
