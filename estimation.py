@@ -18,7 +18,7 @@ class PositionEstimation:
         epsilon: float = 1e-8,
         max_iterations: int = 1000,
         threshold: float = 0,
-        step: int = 60,
+        step: int = 1,
         log_dir: str = "log",
         figure_dir: str = "figure",
     ):
@@ -85,9 +85,9 @@ class PositionEstimation:
                     }
                 )
         return info, local_pos
-    
+
     def calculate_iono_delay(
-            self, time: list[float], satellite_info: list[dict]
+        self, time: list[float], satellite_info: list[dict]
     ) -> float:
         length = len(satellite_info)
         dltR = np.zeros(length)
@@ -96,19 +96,34 @@ class PositionEstimation:
             el = data["elevation"]
             # print(f"PRN: {data['prn']}, Azimuth: {az}, Elevation: {el}")
             el_ = np.clip(el, np.deg2rad(5), np.deg2rad(90))
-            Latitude = np.deg2rad(self.estimate_lla[0]) + (0.0137*el_ - 0.11) / np.cos(el)
-            Longitude = np.deg2rad(self.estimate_lla[1]) + Latitude * np.sin(az) / np.cos(Latitude)
+            Latitude = np.deg2rad(self.estimate_lla[0]) + (
+                0.0137 * el_ - 0.11
+            ) / np.cos(el)
+            Longitude = np.deg2rad(self.estimate_lla[1]) + Latitude * np.sin(
+                az
+            ) / np.cos(Latitude)
             Latitude = Latitude + (0.064 * np.cos(Longitude - 1.617))
             # print(Latitude)
-        
-            Localtime = datetime(*time) - datetime(2024, 12, 14, 15, 0, 0)
-            Localtime = Localtime.total_seconds() % 86400
 
-            A = self.Inon_data[0] + self.Inon_data[1] * Latitude + self.Inon_data[2] * Latitude**2 + self.Inon_data[3] * Latitude**3
-            P = self.Inon_data[4] + self.Inon_data[5] * Latitude + self.Inon_data[6] * Latitude**2 + self.Inon_data[7] * Latitude**3
+            Localtime = datetime(*time) - datetime(2024, 12, 27, 16, 0, 0)
+            Localtime = Localtime.total_seconds() % 86400
+            # print(Localtime)
+
+            A = (
+                self.Inon_data[0]
+                + self.Inon_data[1] * Latitude
+                + self.Inon_data[2] * Latitude**2
+                + self.Inon_data[3] * Latitude**3
+            )
+            P = (
+                self.Inon_data[4]
+                + self.Inon_data[5] * Latitude
+                + self.Inon_data[6] * Latitude**2
+                + self.Inon_data[7] * Latitude**3
+            )
             if A < 0:
                 A = 0
-            
+
             x = 2 * np.pi * (Localtime - 50400) / P
 
             Iion = 5e-9
@@ -120,9 +135,12 @@ class PositionEstimation:
         # print(f"Iono: {dltR}, A: {A}, P: {P}, x: {x}, Localtime: {Localtime}")
         return dltR
 
-
     def estimate_position(
-        self, time: list[float], truth_lla: Vector3, estimation_data: list[dict], data_to_use: str = "c1"
+        self,
+        time: list[float],
+        truth_lla: Vector3,
+        estimation_data: list[dict],
+        data_to_use: str = "c1",
     ) -> tuple[np.ndarray, dict]:
         length = len(estimation_data)
         if length < 4:
@@ -142,7 +160,8 @@ class PositionEstimation:
 
             tz = 77.6e-6 * (101725 / 294.15) * 43000 / 5
             td = 0.373 * (2179 / 294.15**2) * 12000 / 5
-            tropo =  (tz + td) * 1.001 / np.sqrt(0.002001 + np.sin(d["elevation"])**2) 
+            tropo = (tz + td) * 1.001 / np.sqrt(0.002001 + np.sin(d["elevation"]) ** 2)
+            tropo = 0
             # print(f"Tropo: {tropo}")
 
             # r = pseudo + c * delta_t
@@ -150,10 +169,10 @@ class PositionEstimation:
             if self.estimate_lla:
                 dR = self.calculate_iono_delay(time, estimation_data)
                 r = r - dR
-                # print(f"r: {r}, dR: {dR}")
+            # print(f"r: {r}, dR: {dR}")
 
             for i in range(length):
-                Omega_tau = -1 * Omegae_dot * r[i] / c
+                Omega_tau = 2.2 * Omegae_dot * r[i] / c
                 R_sagnac = np.array(
                     [
                         [np.cos(Omega_tau), np.sin(Omega_tau), 0],
@@ -162,8 +181,6 @@ class PositionEstimation:
                     ]
                 )
                 data[i, :3] = data[i, :3] @ R_sagnac.T
-
-
 
             iteration = 0
             while (

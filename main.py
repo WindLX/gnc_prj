@@ -301,8 +301,9 @@ def draw_satellite_tracks(satellite_position, max_gap=90):
 
 if __name__ == "__main__":
     nav_file = "./nav/brdc3490.24n"
+    nav_file = "./nav/brdc3630.24n"
 
-    file_index = 1
+    file_index = -1
 
     obs_files = [
         "./data/1_Medium_Interference_Near_SAA_1525/gnss_log_2024_12_14_15_17_38.24o",
@@ -312,6 +313,7 @@ if __name__ == "__main__":
         "./data/5_DormArea_HighInterference_1620/gnss_log_2024_12_14_16_14_30.24o",
         "./data/6_FootBall Field_1639/gnss_log_2024_12_14_16_32_45.24o",
         "./data/7_WayBackToSAA_1659/gnss_log_2024_12_14_16_49_34.24o",
+        "./data/8_/gnss_log_2024_12_28_14_16_01.24o",
     ]
     obs_file = obs_files[file_index]
 
@@ -323,10 +325,11 @@ if __name__ == "__main__":
         "./data/5_DormArea_HighInterference_1620/doc.kml",
         "./data/6_FootBall Field_1639/doc.kml",
         "./data/7_WayBackToSAA_1659/doc.kml",
+        "./data/8_/doc.kml",
     ]
     track_file = track_files[file_index]
 
-    estimation = PositionEstimation(obs_file, track_file, step=1, threshold=8)
+    estimation = PositionEstimation(obs_file, track_file, step=5, threshold=8)
     observations = estimation.load_observation_data()
 
     evaluation_results = {
@@ -415,10 +418,10 @@ if __name__ == "__main__":
     sns.set_theme(style="whitegrid")
     evalution(df)
     plot_map(df)
-    # plot_error(df)
-    # plot_error_histograms(df)
+    plot_error(df)
+    plot_error_histograms(df)
     plot_coordinates(df)
-    # plot_ecef_coordinates(df)
-    # plot_gdop(df)
-    # plot_gdop_histogram(df)
-    # draw_satellite_tracks(satellite_position)
+    plot_ecef_coordinates(df)
+    plot_gdop(df)
+    plot_gdop_histogram(df)
+    draw_satellite_tracks(satellite_position)
