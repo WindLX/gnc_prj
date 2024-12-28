@@ -390,12 +390,12 @@ if __name__ == "__main__":
         evaluation_results["ecef_z"].append(ecef_position[2])
 
         lla_position = ecef_to_lla(Vector3.from_list(ecef_position))
-        evaluation_results["lat"].append(lla_position[0] + bias[1])
-        evaluation_results["lon"].append(lla_position[1] + bias[0])
+        evaluation_results["lat"].append(lla_position[0] + bias[0])
+        evaluation_results["lon"].append(lla_position[1] + bias[1])
         evaluation_results["alt"].append(lla_position[2])
 
-        evaluation_results["truth_lat"].append(truth_lla[0] + bias[1])
-        evaluation_results["truth_lon"].append(truth_lla[1] + bias[0])
+        evaluation_results["truth_lat"].append(truth_lla[0] + bias[0])
+        evaluation_results["truth_lon"].append(truth_lla[1] + bias[1])
         evaluation_results["truth_alt"].append(truth_lla[2])
 
         for sat_info in satellite_info:

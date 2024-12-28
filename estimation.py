@@ -32,7 +32,7 @@ class PositionEstimation:
         self.log_dir = log_dir
         self.figure_dir = figure_dir
         self.estimate_lla = None
-        self.Inon_data = None
+        self.inon_data = None
 
     def load_observation_data(self):
         obs = RINEXObservationData.read_observation_file(self.obs_file)
@@ -56,7 +56,7 @@ class PositionEstimation:
 
         local_pos = self.get_truth_position(time)
         _head, rinex_nav = RINEXNavigationData.read_rinex_nav(nav_file, time)
-        self.Inon_data = _head[1]
+        self.inon_data = _head[1]
         # print(f"Iono: {self.Inon_data}")
         sv_info = RINEXNavigationData.rinex_nav_to_sv(rinex_nav, time)
 
@@ -96,35 +96,35 @@ class PositionEstimation:
             el = data["elevation"]
             # print(f"PRN: {data['prn']}, Azimuth: {az}, Elevation: {el}")
             el_ = np.clip(el, np.deg2rad(5), np.deg2rad(90))
-            Latitude = np.deg2rad(self.estimate_lla[0]) + (
+            latitude = np.deg2rad(self.estimate_lla[0]) + (
                 0.0137 * el_ - 0.11
             ) / np.cos(el)
-            Longitude = np.deg2rad(self.estimate_lla[1]) + Latitude * np.sin(
+            longitude = np.deg2rad(self.estimate_lla[1]) + latitude * np.sin(
                 az
-            ) / np.cos(Latitude)
-            Latitude = Latitude + (0.064 * np.cos(Longitude - 1.617))
+            ) / np.cos(latitude)
+            latitude = latitude + (0.064 * np.cos(longitude - 1.617))
             # print(Latitude)
 
-            Localtime = datetime(*time) - datetime(2024, 12, 27, 16, 0, 0)
-            Localtime = Localtime.total_seconds() % 86400
+            localtime = datetime(*time) - datetime(2024, 12, 27, 16, 0, 0)
+            localtime = localtime.total_seconds() % 86400
             # print(Localtime)
 
             A = (
-                self.Inon_data[0]
-                + self.Inon_data[1] * Latitude
-                + self.Inon_data[2] * Latitude**2
-                + self.Inon_data[3] * Latitude**3
+                self.inon_data[0]
+                + self.inon_data[1] * latitude
+                + self.inon_data[2] * latitude**2
+                + self.inon_data[3] * latitude**3
             )
             P = (
-                self.Inon_data[4]
-                + self.Inon_data[5] * Latitude
-                + self.Inon_data[6] * Latitude**2
-                + self.Inon_data[7] * Latitude**3
+                self.inon_data[4]
+                + self.inon_data[5] * latitude
+                + self.inon_data[6] * latitude**2
+                + self.inon_data[7] * latitude**3
             )
             if A < 0:
                 A = 0
 
-            x = 2 * np.pi * (Localtime - 50400) / P
+            x = 2 * np.pi * (localtime - 50400) / P
 
             Iion = 5e-9
             if x >= -1.57 and x <= 1.57:
@@ -161,7 +161,6 @@ class PositionEstimation:
             tz = 77.6e-6 * (101725 / 294.15) * 43000 / 5
             td = 0.373 * (2179 / 294.15**2) * 12000 / 5
             tropo = (tz + td) * 1.001 / np.sqrt(0.002001 + np.sin(d["elevation"]) ** 2)
-            tropo = 0
             # print(f"Tropo: {tropo}")
 
             # r = pseudo + c * delta_t
@@ -172,7 +171,7 @@ class PositionEstimation:
             # print(f"r: {r}, dR: {dR}")
 
             for i in range(length):
-                Omega_tau = 2.2 * Omegae_dot * r[i] / c
+                Omega_tau = 1 * Omegae_dot * r[i] / c
                 R_sagnac = np.array(
                     [
                         [np.cos(Omega_tau), np.sin(Omega_tau), 0],
