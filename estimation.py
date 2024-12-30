@@ -34,6 +34,8 @@ class PositionEstimation:
         self.estimate_lla = None
         self.inon_data = None
 
+        self.init_ecef_pos_bias: Vector3 | None = None
+
     def load_observation_data(self):
         obs = RINEXObservationData.read_observation_file(self.obs_file)
         return obs[:: self.step]
@@ -141,6 +143,7 @@ class PositionEstimation:
         truth_lla: Vector3,
         estimation_data: list[dict],
         data_to_use: str = "c1",
+        is_init: bool = False,
     ) -> tuple[np.ndarray, dict]:
         length = len(estimation_data)
         if length < 4:
@@ -205,6 +208,12 @@ class PositionEstimation:
                 )
 
             truth_ecef = lla_to_ecef(truth_lla)
+
+            # init position correction
+            if is_init:
+                self.init_ecef_pos_bias = truth_ecef - Vector3(*x[:3])
+            if self.init_ecef_pos_bias:
+                x[:3] += self.init_ecef_pos_bias.numpy()
             estimated_lla = ecef_to_lla(Vector3(*x[:3]))
             self.estimate_lla = estimated_lla
 

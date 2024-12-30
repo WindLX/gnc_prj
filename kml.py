@@ -41,8 +41,8 @@ class KML:
                     coord = Vector3(
                         float(coord_data[1]), float(coord_data[0]), float(coord_data[2])
                     )
-                    coord[0] = coord[0]
-                    coord[1] = coord[1]
+                    coord[0] = coord[0] + bias[0]
+                    coord[1] = coord[1] + bias[1]
                     track = TrackData(when=current_when, coord=coord)
                     self.track_data.append(track)
                     current_when = None
