@@ -8,7 +8,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from model import Vector3
-from utils import ecef_to_lla, bias
+from utils import ecef_to_lla
 from estimation import PositionEstimation
 from map import Map, PathStyle
 
@@ -300,10 +300,12 @@ def draw_satellite_tracks(satellite_position, max_gap=90):
 
 
 if __name__ == "__main__":
-    nav_file = "./nav/brdc3490.24n"
-    nav_file = "./nav/brdc3630.24n"
-
-    file_index = -1
+    file_index = 0
+    nav_files = ["./nav/brdc3490.24n", "./nav/brdc3630.24n"]
+    if file_index == -1 or file_index == 7:
+        nav_file = nav_files[1]
+    else:
+        nav_file = nav_files[0]
 
     obs_files = [
         "./data/1_Medium_Interference_Near_SAA_1525/gnss_log_2024_12_14_15_17_38.24o",
@@ -355,9 +357,6 @@ if __name__ == "__main__":
     for idx, (time, observation) in tqdm(
         enumerate(observations), total=len(observations), desc="Processing Observations"
     ):
-        for i in range(5):
-            continue
-
         satellite_info, truth_lla = estimation.extract_satellite_info(
             time, observation, nav_file
         )
