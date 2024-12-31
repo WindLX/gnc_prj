@@ -155,50 +155,50 @@ class RINEXNavigationData:
                 time_diff = abs(current_time - t)
                 last_diff = abs(last_search[svprn - 1] - t)
 
-                # if time_diff < 7200 and not is_found[svprn - 1]:
-                #     if last_search[svprn - 1] < t <= current_time:
-                #         is_found[svprn - 1] = True
-                #         if last_diff <= time_diff:
-                #             continue
-                #     last_search[svprn - 1] = current_time
-                eph.update(
-                    {
-                        svprn: RINEXNavigationData(
-                            system,
-                            svprn,
-                            af2,
-                            M0,
-                            sqrt_a,
-                            deltan,
-                            ecc,
-                            omega,
-                            cuc,
-                            cus,
-                            crc,
-                            crs,
-                            i0,
-                            IDOT,
-                            cic,
-                            cis,
-                            Omega0,
-                            Omega_dot,
-                            toe,
-                            af0,
-                            af1,
-                            toc,
-                            IODE,
-                            IODC,
-                            weekno,
-                            L2flag,
-                            svaccur,
-                            svhealth,
-                            tgd,
-                            weekno * 7 * 86400 + tom,
-                            weekno * 7 * 86400 + toe,
-                            weekno * 7 * 86400 + toc,
-                        )
-                    }
-                )
+                if time_diff < 7200 and not is_found[svprn - 1]:
+                    if last_search[svprn - 1] < t <= current_time:
+                        is_found[svprn - 1] = True
+                        if last_diff <= time_diff:
+                            continue
+                    last_search[svprn - 1] = current_time
+                    eph.update(
+                        {
+                            svprn: RINEXNavigationData(
+                                system,
+                                svprn,
+                                af2,
+                                M0,
+                                sqrt_a,
+                                deltan,
+                                ecc,
+                                omega,
+                                cuc,
+                                cus,
+                                crc,
+                                crs,
+                                i0,
+                                IDOT,
+                                cic,
+                                cis,
+                                Omega0,
+                                Omega_dot,
+                                toe,
+                                af0,
+                                af1,
+                                toc,
+                                IODE,
+                                IODC,
+                                weekno,
+                                L2flag,
+                                svaccur,
+                                svhealth,
+                                tgd,
+                                weekno * 7 * 86400 + tom,
+                                weekno * 7 * 86400 + toe,
+                                weekno * 7 * 86400 + toc,
+                            )
+                        }
+                    )
 
                 if not lines[0]:
                     if any(value is None for value in eph.values()):
