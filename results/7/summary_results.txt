@@ -1,27 +1,27 @@
 Mean Estimated Position (ECEF):
-  X: nan meters
-  Y: nan meters
-  Z: nan meters
+  X: -2853804.0445045913 meters
+  Y: 4667166.25025009 meters
+  Z: 3268336.709376681 meters
 
 Variance of Estimated Position (ECEF):
-  X: nan meters^2
-  Y: nan meters^2
-  Z: nan meters^2
+  X: 4250.844472995928 meters^2
+  Y: 788.4858157624745 meters^2
+  Z: 9024.690894023974 meters^2
 
 Mean Errors:
-  Norm Error: nan meters
-  Horizontal Error Latitude: nan meters
-  Horizontal Error Longitude: nan meters
-  Vertical Error: nan meters
+  Norm Error: 16.438381111340025 meters
+  Horizontal Error Latitude: 0.03936451666180907 meters
+  Horizontal Error Longitude: -4.166686274467947 meters
+  Vertical Error: -7.04575400510044 meters
 
 Variance of Errors:
-  Norm Error: nan meters^2
-  Horizontal Error Latitude: nan meters^2
-  Horizontal Error Longitude: nan meters^2
-  Vertical Error: nan meters^2
+  Norm Error: 132.08204102065724 meters^2
+  Horizontal Error Latitude: 67.1746542956119 meters^2
+  Horizontal Error Longitude: 72.1568185254383 meters^2
+  Vertical Error: 196.8877357287519 meters^2
 
 Mean GDOP:
-  nan
+  2.3838796829918985
 
 Variance of GDOP:
-  nan
+  0.1426575729735031
