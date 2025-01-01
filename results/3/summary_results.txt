@@ -1,0 +1,27 @@
+Mean Estimated Position (ECEF):
+  X: -2853341.999838673 meters
+  Y: 4667578.596703896 meters
+  Z: 3268427.4213663824 meters
+
+Variance of Estimated Position (ECEF):
+  X: 26649.42770709345 meters^2
+  Y: 16394.850155761855 meters^2
+  Z: 11077.105739966219 meters^2
+
+Mean Errors:
+  Norm Error: 141.91226413279372 meters
+  Horizontal Error Latitude: -16.383666012988705 meters
+  Horizontal Error Longitude: 37.98011091160821 meters
+  Vertical Error: 117.63661252587583 meters
+
+Variance of Errors:
+  Norm Error: 48264.42488202896 meters^2
+  Horizontal Error Latitude: 2366.508877954137 meters^2
+  Horizontal Error Longitude: 5164.104966275324 meters^2
+  Vertical Error: 46078.68845389743 meters^2
+
+Mean GDOP:
+  4.805484343032702
+
+Variance of GDOP:
+  0.31203720007783714
