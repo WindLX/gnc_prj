@@ -1,0 +1,27 @@
+Mean Estimated Position (ECEF):
+  X: nan meters
+  Y: nan meters
+  Z: nan meters
+
+Variance of Estimated Position (ECEF):
+  X: nan meters^2
+  Y: nan meters^2
+  Z: nan meters^2
+
+Mean Errors:
+  Norm Error: nan meters
+  Horizontal Error Latitude: nan meters
+  Horizontal Error Longitude: nan meters
+  Vertical Error: nan meters
+
+Variance of Errors:
+  Norm Error: nan meters^2
+  Horizontal Error Latitude: nan meters^2
+  Horizontal Error Longitude: nan meters^2
+  Vertical Error: nan meters^2
+
+Mean GDOP:
+  nan
+
+Variance of GDOP:
+  nan

@@ -49,7 +49,7 @@ def evalution(df):
     gdop_variance = df["GDOP"].var()
     print(f"Variance of GDOP: {gdop_variance}")
 
-    log_path = Path("log") / "summary_results.txt"
+    log_path = Path(Result_file) / "summary_results.txt"
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
     with log_path.open("w") as f:
@@ -85,7 +85,7 @@ def evalution(df):
         f.write(f"  {gdop_variance}\n")
 
 
-def plot_error(df):
+def plot_error(df,result_file,plot_flag=True):
     plt.figure(figsize=(10, 6))
 
     sns.lineplot(
@@ -120,10 +120,12 @@ def plot_error(df):
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(result_file+"error.png", dpi=300, bbox_inches='tight')
+    if(plot_flag):
+        plt.show()
 
 
-def plot_error_histograms(df):
+def plot_error_histograms(df,result_file,plot_flag=True):
     plt.figure(figsize=(14, 10))
 
     plt.subplot(2, 2, 1)
@@ -147,10 +149,12 @@ def plot_error_histograms(df):
     plt.xlabel("Vertical Error (meters)")
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(result_file+"error_histograms.png", dpi=300, bbox_inches='tight')
+    if(plot_flag):
+        plt.show()
 
 
-def plot_gdop(df):
+def plot_gdop(df,result_file,plot_flag=True):
     plt.figure(figsize=(10, 6))
 
     sns.lineplot(data=df, x="time", y="GDOP", label="GDOP")
@@ -164,10 +168,12 @@ def plot_gdop(df):
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(result_file+"gdop.png", dpi=300, bbox_inches='tight')
+    if(plot_flag):
+        plt.show()
 
 
-def plot_gdop_histogram(df):
+def plot_gdop_histogram(df,result_file,plot_flag=True):
     plt.figure(figsize=(10, 6))
 
     sns.histplot(df["GDOP"], kde=True)
@@ -176,10 +182,13 @@ def plot_gdop_histogram(df):
     plt.ylabel("Frequency")
 
     plt.tight_layout()
-    plt.show()
+    
+    plt.savefig(result_file+"gdop_histogram.png", dpi=300, bbox_inches='tight')
+    if(plot_flag):
+        plt.show()
 
 
-def plot_coordinates(df):
+def plot_coordinates(df,result_file,plot_flag=True):
     plt.figure(figsize=(10, 6))
 
     plt.plot(df["lon"], df["lat"], label="Estimated Coordinates", color="blue")
@@ -192,10 +201,12 @@ def plot_coordinates(df):
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(result_file+"coordinates.png", dpi=300, bbox_inches='tight')
+    if(plot_flag):
+        plt.show()
 
 
-def plot_map(df):
+def plot_map(df,result_file):
     map = Map()
 
     estimated_locations = [
@@ -227,14 +238,14 @@ def plot_map(df):
     estimated_map_image = map.get_map_image(estimated_uri)
     true_map_image = map.get_map_image(true_uri)
 
-    with open("estimated_map.png", "wb") as f:
+    with open(result_file+"estimated_map.png", "wb") as f:
         f.write(estimated_map_image)
 
-    with open("true_map.png", "wb") as f:
+    with open(result_file+"true_map.png", "wb") as f:
         f.write(true_map_image)
 
 
-def plot_ecef_coordinates(df):
+def plot_ecef_coordinates(df,result_file,plot_flag=True):
     plt.figure(figsize=(14, 8))
 
     plt.subplot(3, 1, 1)
@@ -256,10 +267,13 @@ def plot_ecef_coordinates(df):
     plt.ylabel("ECEF Z (meters)")
 
     plt.tight_layout()
-    plt.show()
+    
+    plt.savefig(result_file+"ecef_coordinates.png", dpi=300, bbox_inches='tight')
+    if(plot_flag):
+        plt.show()
 
 
-def draw_satellite_tracks(satellite_position, max_gap=90):
+def draw_satellite_tracks(satellite_position,result_file,plot_flag=True,max_gap=90):
     fig = plt.figure(figsize=(12, 12))
     ax = fig.add_subplot(111, projection="polar")
     colors = plt.cm.get_cmap("tab20", len(satellite_position["prn"].unique()))
@@ -296,136 +310,145 @@ def draw_satellite_tracks(satellite_position, max_gap=90):
 
     plt.title("Satellite Tracks on Skyplot", pad=40)
     plt.tight_layout()
-    plt.show()
+    
+    plt.savefig(result_file+"satellite_tracks.png", dpi=300, bbox_inches='tight')
+    
+    if(plot_flag):
+        plt.show()
 
 
 if __name__ == "__main__":
-    file_index = 0
-    nav_files = ["./nav/brdc3490.24n", "./nav/brdc3630.24n"]
-    if file_index == -1 or file_index == 7:
-        nav_file = nav_files[1]
-    else:
-        nav_file = nav_files[0]
+    ##for i in range(0,8):
+        file_index = 0
+        plot_show_flag = False
+        
+        nav_files = ["./nav/brdc3490.24n", "./nav/brdc3630.24n"]
+        if file_index == -1 or file_index == 7:
+            nav_file = nav_files[1]
+        else:
+            nav_file = nav_files[0]
 
-    obs_files = [
-        "./data/1_Medium_Interference_Near_SAA_1525/gnss_log_2024_12_14_15_17_38.24o",
-        "./data/2_Open_field_Lawn_1541/gnss_log_2024_12_14_15_28_53.24o",
-        "./data/3_Forest_1542/gnss_log_2024_12_14_15_46_31.24o",
-        "./data/4_LibraryBasement_1606/gnss_log_2024_12_14_16_02_14.24o",
-        "./data/5_DormArea_HighInterference_1620/gnss_log_2024_12_14_16_14_30.24o",
-        "./data/6_FootBall Field_1639/gnss_log_2024_12_14_16_32_45.24o",
-        "./data/7_WayBackToSAA_1659/gnss_log_2024_12_14_16_49_34.24o",
-        "./data/8_/gnss_log_2024_12_28_14_16_01.24o",
-    ]
-    obs_file = obs_files[file_index]
+        obs_files = [
+            "./data/1_Medium_Interference_Near_SAA_1525/gnss_log_2024_12_14_15_17_38.24o",
+            "./data/2_Open_field_Lawn_1541/gnss_log_2024_12_14_15_28_53.24o",
+            "./data/3_Forest_1542/gnss_log_2024_12_14_15_46_31.24o",
+            "./data/4_LibraryBasement_1606/gnss_log_2024_12_14_16_02_14.24o",
+            "./data/5_DormArea_HighInterference_1620/gnss_log_2024_12_14_16_14_30.24o",
+            "./data/6_FootBall Field_1639/gnss_log_2024_12_14_16_32_45.24o",
+            "./data/7_WayBackToSAA_1659/gnss_log_2024_12_14_16_49_34.24o",
+            "./data/8_/gnss_log_2024_12_28_14_16_01.24o",
+        ]
+        obs_file = obs_files[file_index]
 
-    track_files = [
-        "./data/1_Medium_Interference_Near_SAA_1525/doc.kml",
-        "./data/2_Open_field_Lawn_1541/doc.kml",
-        "./data/3_Forest_1542/doc.kml",
-        "./data/4_LibraryBasement_1606/doc.kml",
-        "./data/5_DormArea_HighInterference_1620/doc.kml",
-        "./data/6_FootBall Field_1639/doc.kml",
-        "./data/7_WayBackToSAA_1659/doc.kml",
-        "./data/8_/doc.kml",
-    ]
-    track_file = track_files[file_index]
+        track_files = [
+            "./data/1_Medium_Interference_Near_SAA_1525/doc.kml",
+            "./data/2_Open_field_Lawn_1541/doc.kml",
+            "./data/3_Forest_1542/doc.kml",
+            "./data/4_LibraryBasement_1606/doc.kml",
+            "./data/5_DormArea_HighInterference_1620/doc.kml",
+            "./data/6_FootBall Field_1639/doc.kml",
+            "./data/7_WayBackToSAA_1659/doc.kml",
+            "./data/8_/doc.kml",
+        ]
+        track_file = track_files[file_index]
+        
+        Result_file = "./results/"+str(file_index)+'/'
 
-    estimation = PositionEstimation(obs_file, track_file, step=5, threshold=8)
-    observations = estimation.load_observation_data()
+        estimation = PositionEstimation(obs_file, track_file, step=5, threshold=8, result_file=Result_file)
+        observations = estimation.load_observation_data()
 
-    evaluation_results = {
-        "time": [],
-        "norm_error": [],
-        "horizontal_error_lat": [],
-        "horizontal_error_lon": [],
-        "vertical_error": [],
-        "ecef_x": [],
-        "ecef_y": [],
-        "ecef_z": [],
-        "lat": [],
-        "lon": [],
-        "alt": [],
-        "truth_lat": [],
-        "truth_lon": [],
-        "truth_alt": [],
-        "GDOP": [],
-    }
+        evaluation_results = {
+            "time": [],
+            "norm_error": [],
+            "horizontal_error_lat": [],
+            "horizontal_error_lon": [],
+            "vertical_error": [],
+            "ecef_x": [],
+            "ecef_y": [],
+            "ecef_z": [],
+            "lat": [],
+            "lon": [],
+            "alt": [],
+            "truth_lat": [],
+            "truth_lon": [],
+            "truth_alt": [],
+            "GDOP": [],
+        }
 
-    satellite_position = None
+        satellite_position = None
 
-    for idx, (time, observation) in tqdm(
-        enumerate(observations), total=len(observations), desc="Processing Observations"
-    ):
-        satellite_info, truth_lla = estimation.extract_satellite_info(
-            time, observation, nav_file
-        )
-        try:
-            estimation_result = estimation.estimate_position(
-                time, truth_lla, satellite_info, is_init=(idx == 0)
+        for idx, (time, observation) in tqdm(
+            enumerate(observations), total=len(observations), desc="Processing Observations"
+        ):
+            satellite_info, truth_lla = estimation.extract_satellite_info(
+                time, observation, nav_file
             )
-        except ValueError as e:
-            print(f"Error: {e}")
-            continue
-        except RuntimeError as e:
-            print(f"Error: {e}")
-            continue
-
-        estimation.draw_skymap(time, satellite_info)
-        estimation.log(time, truth_lla, satellite_info, estimation_result)
-
-        evaluation_results["time"].append(datetime(*time))
-        evaluation_results["norm_error"].append(estimation_result[1]["norm_error"])
-        evaluation_results["horizontal_error_lat"].append(
-            estimation_result[1]["horizontal_error"][0]
-        )
-        evaluation_results["horizontal_error_lon"].append(
-            estimation_result[1]["horizontal_error"][1]
-        )
-        evaluation_results["vertical_error"].append(
-            estimation_result[1]["vertical_error"]
-        )
-
-        evaluation_results["GDOP"].append(estimation_result[1]["GDOP"])
-
-        ecef_position = estimation_result[0]
-        evaluation_results["ecef_x"].append(ecef_position[0])
-        evaluation_results["ecef_y"].append(ecef_position[1])
-        evaluation_results["ecef_z"].append(ecef_position[2])
-
-        lla_position = ecef_to_lla(Vector3.from_list(ecef_position))
-        evaluation_results["lat"].append(lla_position[0])
-        evaluation_results["lon"].append(lla_position[1])
-        evaluation_results["alt"].append(lla_position[2])
-
-        evaluation_results["truth_lat"].append(truth_lla[0])
-        evaluation_results["truth_lon"].append(truth_lla[1])
-        evaluation_results["truth_alt"].append(truth_lla[2])
-
-        for sat_info in satellite_info:
-            new_row = pd.DataFrame(
-                {
-                    "time": [datetime(*time)],
-                    "prn": [sat_info["prn"]],
-                    "azimuth": [sat_info["azimuth"]],
-                    "elevation": [sat_info["elevation"]],
-                }
-            )
-            if satellite_position is None:
-                satellite_position = new_row
-            else:
-                satellite_position = pd.concat(
-                    [satellite_position, new_row], ignore_index=True
+            try:
+                estimation_result = estimation.estimate_position(
+                    time, truth_lla, satellite_info, is_init=(idx == 0)
                 )
+            except ValueError as e:
+                print(f"Error: {e}")
+                continue
+            except RuntimeError as e:
+                print(f"Error: {e}")
+                continue
 
-    df = pd.DataFrame(evaluation_results)
-    sns.set_theme(style="whitegrid")
-    evalution(df)
-    plot_map(df)
-    plot_error(df)
-    plot_error_histograms(df)
-    plot_coordinates(df)
-    plot_ecef_coordinates(df)
-    plot_gdop(df)
-    plot_gdop_histogram(df)
-    draw_satellite_tracks(satellite_position)
+            estimation.draw_skymap(time, satellite_info)
+            estimation.log(time, truth_lla, satellite_info, estimation_result)
+
+            evaluation_results["time"].append(datetime(*time))
+            evaluation_results["norm_error"].append(estimation_result[1]["norm_error"])
+            evaluation_results["horizontal_error_lat"].append(
+                estimation_result[1]["horizontal_error"][0]
+            )
+            evaluation_results["horizontal_error_lon"].append(
+                estimation_result[1]["horizontal_error"][1]
+            )
+            evaluation_results["vertical_error"].append(
+                estimation_result[1]["vertical_error"]
+            )
+
+            evaluation_results["GDOP"].append(estimation_result[1]["GDOP"])
+
+            ecef_position = estimation_result[0]
+            evaluation_results["ecef_x"].append(ecef_position[0])
+            evaluation_results["ecef_y"].append(ecef_position[1])
+            evaluation_results["ecef_z"].append(ecef_position[2])
+
+            lla_position = ecef_to_lla(Vector3.from_list(ecef_position))
+            evaluation_results["lat"].append(lla_position[0])
+            evaluation_results["lon"].append(lla_position[1])
+            evaluation_results["alt"].append(lla_position[2])
+
+            evaluation_results["truth_lat"].append(truth_lla[0])
+            evaluation_results["truth_lon"].append(truth_lla[1])
+            evaluation_results["truth_alt"].append(truth_lla[2])
+
+            for sat_info in satellite_info:
+                new_row = pd.DataFrame(
+                    {
+                        "time": [datetime(*time)],
+                        "prn": [sat_info["prn"]],
+                        "azimuth": [sat_info["azimuth"]],
+                        "elevation": [sat_info["elevation"]],
+                    }
+                )
+                if satellite_position is None:
+                    satellite_position = new_row
+                else:
+                    satellite_position = pd.concat(
+                        [satellite_position, new_row], ignore_index=True
+                    )
+
+        df = pd.DataFrame(evaluation_results)
+        sns.set_theme(style="whitegrid")
+        evalution(df)
+        plot_map(df,result_file=Result_file)
+        plot_error(df,result_file=Result_file,plot_flag=plot_show_flag)
+        plot_error_histograms(df,result_file=Result_file,plot_flag=plot_show_flag)
+        plot_coordinates(df,result_file=Result_file,plot_flag=plot_show_flag)
+        plot_ecef_coordinates(df,result_file=Result_file,plot_flag=plot_show_flag)
+        plot_gdop(df,result_file=Result_file,plot_flag=plot_show_flag)
+        plot_gdop_histogram(df,result_file=Result_file,plot_flag=plot_show_flag)
+        draw_satellite_tracks(satellite_position,result_file=Result_file,plot_flag=plot_show_flag)

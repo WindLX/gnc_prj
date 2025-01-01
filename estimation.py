@@ -21,6 +21,7 @@ class PositionEstimation:
         step: int = 1,
         log_dir: str = "log",
         figure_dir: str = "figure",
+        result_file: str = "results",
     ):
         self.obs_file = obs_file
         self.track = KML(track_file)
@@ -29,10 +30,13 @@ class PositionEstimation:
         self.max_iterations = max_iterations
         self.elevation_threshold = threshold
         self.step = step
-        self.log_dir = log_dir
-        self.figure_dir = figure_dir
+        
+        self.log_dir = result_file + log_dir
+        self.figure_dir = result_file + figure_dir
         self.estimate_lla = None
         self.inon_data = None
+        
+        
 
         self.init_ecef_pos_bias: Vector3 | None = None
 
