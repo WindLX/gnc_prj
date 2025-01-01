@@ -49,7 +49,7 @@ def evalution(df):
     gdop_variance = df["GDOP"].var()
     print(f"Variance of GDOP: {gdop_variance}")
 
-    log_path = Path("log") / "summary_results.txt"
+    log_path = Path(Result_file) / "summary_results.txt"
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
     with log_path.open("w") as f:
@@ -85,7 +85,7 @@ def evalution(df):
         f.write(f"  {gdop_variance}\n")
 
 
-def plot_error(df):
+def plot_error(df, result_file, plot_flag=True):
     plt.figure(figsize=(10, 6))
 
     sns.lineplot(
@@ -120,10 +120,12 @@ def plot_error(df):
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(result_file + "error.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
 
 
-def plot_error_histograms(df):
+def plot_error_histograms(df, result_file, plot_flag=True):
     plt.figure(figsize=(14, 10))
 
     plt.subplot(2, 2, 1)
@@ -147,10 +149,12 @@ def plot_error_histograms(df):
     plt.xlabel("Vertical Error (meters)")
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(result_file + "error_histograms.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
 
 
-def plot_gdop(df):
+def plot_gdop(df, result_file, plot_flag=True):
     plt.figure(figsize=(10, 6))
 
     sns.lineplot(data=df, x="time", y="GDOP", label="GDOP")
@@ -164,10 +168,12 @@ def plot_gdop(df):
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(result_file + "gdop.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
 
 
-def plot_gdop_histogram(df):
+def plot_gdop_histogram(df, result_file, plot_flag=True):
     plt.figure(figsize=(10, 6))
 
     sns.histplot(df["GDOP"], kde=True)
@@ -176,10 +182,13 @@ def plot_gdop_histogram(df):
     plt.ylabel("Frequency")
 
     plt.tight_layout()
-    plt.show()
+
+    plt.savefig(result_file + "gdop_histogram.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
 
 
-def plot_coordinates(df):
+def plot_coordinates(df, result_file, plot_flag=True):
     plt.figure(figsize=(10, 6))
 
     plt.plot(df["lon"], df["lat"], label="Estimated Coordinates", color="blue")
@@ -192,10 +201,12 @@ def plot_coordinates(df):
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(result_file + "coordinates.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
 
 
-def plot_map(df):
+def plot_map(df, result_file):
     map = Map()
 
     estimated_locations = [
@@ -227,14 +238,14 @@ def plot_map(df):
     estimated_map_image = map.get_map_image(estimated_uri)
     true_map_image = map.get_map_image(true_uri)
 
-    with open("estimated_map.png", "wb") as f:
+    with open(result_file + "estimated_map.png", "wb") as f:
         f.write(estimated_map_image)
 
-    with open("true_map.png", "wb") as f:
+    with open(result_file + "true_map.png", "wb") as f:
         f.write(true_map_image)
 
 
-def plot_ecef_coordinates(df):
+def plot_ecef_coordinates(df, result_file, plot_flag=True):
     plt.figure(figsize=(14, 8))
 
     plt.subplot(3, 1, 1)
@@ -256,10 +267,13 @@ def plot_ecef_coordinates(df):
     plt.ylabel("ECEF Z (meters)")
 
     plt.tight_layout()
-    plt.show()
+
+    plt.savefig(result_file + "ecef_coordinates.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
 
 
-def draw_satellite_tracks(satellite_position, max_gap=90):
+def draw_satellite_tracks(satellite_position, result_file, plot_flag=True, max_gap=90):
     fig = plt.figure(figsize=(12, 12))
     ax = fig.add_subplot(111, projection="polar")
     colors = plt.cm.get_cmap("tab20", len(satellite_position["prn"].unique()))
@@ -296,11 +310,18 @@ def draw_satellite_tracks(satellite_position, max_gap=90):
 
     plt.title("Satellite Tracks on Skyplot", pad=40)
     plt.tight_layout()
-    plt.show()
+
+    plt.savefig(result_file + "satellite_tracks.png", dpi=300, bbox_inches="tight")
+
+    if plot_flag:
+        plt.show()
 
 
 if __name__ == "__main__":
-    file_index = -1
+    ##for i in range(0,8):
+    file_index = 7
+    plot_show_flag = False
+
     nav_files = ["./nav/brdc3490.24n", "./nav/brdc3630.24n"]
     if file_index == -1 or file_index == 7:
         nav_file = nav_files[1]
@@ -331,7 +352,11 @@ if __name__ == "__main__":
     ]
     track_file = track_files[file_index]
 
-    estimation = PositionEstimation(obs_file, track_file, step=5, threshold=8)
+    Result_file = "./results/" + str(file_index) + "/"
+
+    estimation = PositionEstimation(
+        obs_file, track_file, step=5, threshold=8, result_file=Result_file
+    )
     observations = estimation.load_observation_data()
 
     evaluation_results = {
@@ -421,11 +446,13 @@ if __name__ == "__main__":
     df = pd.DataFrame(evaluation_results)
     sns.set_theme(style="whitegrid")
     evalution(df)
-    plot_map(df)
-    plot_error(df)
-    plot_error_histograms(df)
-    plot_coordinates(df)
-    plot_ecef_coordinates(df)
-    plot_gdop(df)
-    plot_gdop_histogram(df)
-    draw_satellite_tracks(satellite_position)
+    plot_map(df, result_file=Result_file)
+    plot_error(df, result_file=Result_file, plot_flag=plot_show_flag)
+    plot_error_histograms(df, result_file=Result_file, plot_flag=plot_show_flag)
+    plot_coordinates(df, result_file=Result_file, plot_flag=plot_show_flag)
+    plot_ecef_coordinates(df, result_file=Result_file, plot_flag=plot_show_flag)
+    plot_gdop(df, result_file=Result_file, plot_flag=plot_show_flag)
+    plot_gdop_histogram(df, result_file=Result_file, plot_flag=plot_show_flag)
+    draw_satellite_tracks(
+        satellite_position, result_file=Result_file, plot_flag=plot_show_flag
+    )
