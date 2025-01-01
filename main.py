@@ -319,7 +319,7 @@ def draw_satellite_tracks(satellite_position,result_file,plot_flag=True,max_gap=
 
 if __name__ == "__main__":
     ##for i in range(0,8):
-        file_index = 0
+        file_index = 7
         plot_show_flag = False
         
         nav_files = ["./nav/brdc3490.24n", "./nav/brdc3630.24n"]
