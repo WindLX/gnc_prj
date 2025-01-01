@@ -300,7 +300,7 @@ def draw_satellite_tracks(satellite_position, max_gap=90):
 
 
 if __name__ == "__main__":
-    file_index = 0
+    file_index = -1
     nav_files = ["./nav/brdc3490.24n", "./nav/brdc3630.24n"]
     if file_index == -1 or file_index == 7:
         nav_file = nav_files[1]
