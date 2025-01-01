@@ -30,13 +30,11 @@ class PositionEstimation:
         self.max_iterations = max_iterations
         self.elevation_threshold = threshold
         self.step = step
-        
+
         self.log_dir = result_file + log_dir
         self.figure_dir = result_file + figure_dir
         self.estimate_lla = None
         self.inon_data = None
-        
-        
 
         self.init_ecef_pos_bias: Vector3 | None = None
 

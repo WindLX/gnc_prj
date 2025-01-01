@@ -49,7 +49,7 @@ def evalution(df):
     gdop_variance = df["GDOP"].var()
     print(f"Variance of GDOP: {gdop_variance}")
 
-    log_path = Path(Result_file) / "summary_results.txt"
+    log_path = Path(result_file) / "summary_results.txt"
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
     with log_path.open("w") as f:
@@ -352,10 +352,10 @@ if __name__ == "__main__":
     ]
     track_file = track_files[file_index]
 
-    Result_file = "./results/" + str(file_index) + "/"
+    result_file = "./results/" + str(file_index) + "/"
 
     estimation = PositionEstimation(
-        obs_file, track_file, step=5, threshold=8, result_file=Result_file
+        obs_file, track_file, step=5, threshold=8, result_file=result_file
     )
     observations = estimation.load_observation_data()
 
@@ -446,13 +446,13 @@ if __name__ == "__main__":
     df = pd.DataFrame(evaluation_results)
     sns.set_theme(style="whitegrid")
     evalution(df)
-    plot_map(df, result_file=Result_file)
-    plot_error(df, result_file=Result_file, plot_flag=plot_show_flag)
-    plot_error_histograms(df, result_file=Result_file, plot_flag=plot_show_flag)
-    plot_coordinates(df, result_file=Result_file, plot_flag=plot_show_flag)
-    plot_ecef_coordinates(df, result_file=Result_file, plot_flag=plot_show_flag)
-    plot_gdop(df, result_file=Result_file, plot_flag=plot_show_flag)
-    plot_gdop_histogram(df, result_file=Result_file, plot_flag=plot_show_flag)
+    plot_map(df, result_file=result_file)
+    plot_error(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_error_histograms(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_coordinates(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_ecef_coordinates(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_gdop(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_gdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
     draw_satellite_tracks(
-        satellite_position, result_file=Result_file, plot_flag=plot_show_flag
+        satellite_position, result_file=result_file, plot_flag=plot_show_flag
     )
