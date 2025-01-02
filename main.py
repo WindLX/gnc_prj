@@ -276,13 +276,13 @@ def plot_ecef_coordinates(df, result_file, plot_flag=True):
 def draw_satellite_tracks(satellite_position, result_file, plot_flag=True, max_gap=90):
     fig = plt.figure(figsize=(12, 12))
     ax = fig.add_subplot(111, projection="polar")
-    colors = plt.cm.get_cmap("tab20", len(satellite_position["prn"].unique()))
+    colors = plt.colormaps["tab20"]
 
     for idx, prn in enumerate(satellite_position["prn"].unique()):
         sat_data = satellite_position[satellite_position["prn"] == prn]
 
-        sat_data["azimuth"] = np.mod(sat_data["azimuth"], 2 * np.pi)
-        sat_data["elevation"] = np.mod(sat_data["elevation"], 2 * np.pi)
+        sat_data.loc[:, "azimuth"] = np.mod(sat_data["azimuth"], 2 * np.pi)
+        sat_data.loc[:, "elevation"] = np.mod(sat_data["elevation"], 2 * np.pi)
         azimuth_diff = np.diff(sat_data["azimuth"])
         elevation_diff = np.diff(sat_data["elevation"])
         large_changes = (np.abs(azimuth_diff) > np.radians(max_gap)) | (
@@ -355,9 +355,10 @@ if __name__ == "__main__":
     result_file = "./results/" + str(file_index) + "/"
 
     estimation = PositionEstimation(
-        obs_file, track_file, step=5, threshold=8, result_file=result_file
+        obs_file, nav_file, track_file, step=5, threshold=8, result_file=result_file
     )
     observations = estimation.load_observation_data()
+    head, navigations = estimation.load_navigation_data(observations[0][0])
 
     evaluation_results = {
         "time": [],
@@ -383,7 +384,7 @@ if __name__ == "__main__":
         enumerate(observations), total=len(observations), desc="Processing Observations"
     ):
         satellite_info, truth_lla = estimation.extract_satellite_info(
-            time, observation, nav_file
+            time, observation, head, navigations
         )
         try:
             estimation_result = estimation.estimate_position(

@@ -14,7 +14,11 @@ class PositionEstimation:
     def __init__(
         self,
         obs_file: str,
+        nav_file: str,
         track_file: str,
+        enable_init_alignment: bool = True,
+        enable_iono_correction: bool = True,
+        enable_tropo_correction: bool = True,
         epsilon: float = 1e-8,
         max_iterations: int = 1000,
         threshold: float = 0,
@@ -24,8 +28,14 @@ class PositionEstimation:
         result_file: str = "results",
     ):
         self.obs_file = obs_file
+        self.nav_file = nav_file
         self.track = KML(track_file)
         self.track.parse()
+
+        self.enable_init_alignment = enable_init_alignment
+        self.enable_iono_correction = enable_iono_correction
+        self.enable_tropo_correction = enable_tropo_correction
+
         self.estimate_epsilon = epsilon
         self.max_iterations = max_iterations
         self.elevation_threshold = threshold
@@ -34,13 +44,17 @@ class PositionEstimation:
         self.log_dir = result_file + log_dir
         self.figure_dir = result_file + figure_dir
         self.estimate_lla = None
-        self.inon_data = None
+        self.iono_data = None
 
         self.init_ecef_pos_bias: Vector3 | None = None
 
     def load_observation_data(self):
         obs = RINEXObservationData.read_observation_file(self.obs_file)
         return obs[:: self.step]
+
+    def load_navigation_data(self, time: list):
+        head, nav = RINEXNavigationData.read_rinex_nav(self.nav_file, time)
+        return head, nav
 
     def get_truth_position(self, time: list) -> Vector3:
         return self.track.interpolate_at(datetime(*time))
@@ -49,7 +63,8 @@ class PositionEstimation:
         self,
         time: list[float],
         observation: list[RINEXObservationData],
-        nav_file: str,
+        navigation_head: dict,
+        navigation: dict[int, RINEXNavigationData],
         target_system: SatelliteSystem = SatelliteSystem.GPS,
     ) -> tuple[list[dict], Vector3]:
         info = []
@@ -59,10 +74,9 @@ class PositionEstimation:
         ]
 
         local_pos = self.get_truth_position(time)
-        _head, rinex_nav = RINEXNavigationData.read_rinex_nav(nav_file, time)
-        self.inon_data = _head[1]
-        # print(f"Iono: {self.Inon_data}")
-        sv_info = RINEXNavigationData.rinex_nav_to_sv(rinex_nav, time)
+
+        self.iono_data = navigation_head[1]
+        sv_info = RINEXNavigationData.rinex_nav_to_sv(navigation, time)
 
         for data in target_satellites:
             prn = data.prn
@@ -107,23 +121,23 @@ class PositionEstimation:
                 az
             ) / np.cos(latitude)
             latitude = latitude + (0.064 * np.cos(longitude - 1.617))
-            # print(Latitude)
+            # print(latitude)
 
             localtime = datetime(*time) - datetime(2024, 12, 27, 16, 0, 0)
             localtime = localtime.total_seconds() % 86400
-            # print(Localtime)
+            # print(localtime)
 
             A = (
-                self.inon_data[0]
-                + self.inon_data[1] * latitude
-                + self.inon_data[2] * latitude**2
-                + self.inon_data[3] * latitude**3
+                self.iono_data[0]
+                + self.iono_data[1] * latitude
+                + self.iono_data[2] * latitude**2
+                + self.iono_data[3] * latitude**3
             )
             P = (
-                self.inon_data[4]
-                + self.inon_data[5] * latitude
-                + self.inon_data[6] * latitude**2
-                + self.inon_data[7] * latitude**3
+                self.iono_data[4]
+                + self.iono_data[5] * latitude
+                + self.iono_data[6] * latitude**2
+                + self.iono_data[7] * latitude**3
             )
             if A < 0:
                 A = 0
@@ -138,6 +152,19 @@ class PositionEstimation:
         dltR = dltR * c
         # print(f"Iono: {dltR}, A: {A}, P: {P}, x: {x}, Localtime: {Localtime}")
         return dltR
+
+    def calculate_tropo_delay(
+        self,
+        estimation_data: list[dict],
+    ) -> float:
+        tropo = np.zeros(len(estimation_data))
+        elevation = np.array([d["elevation"] for d in estimation_data])
+
+        tz = 77.6e-6 * (101725 / 294.15) * 43000 / 5
+        td = 0.373 * (2179 / 294.15**2) * 12000 / 5
+        tropo = (tz + td) * 1.001 / np.sqrt(0.002001 + np.sin(elevation) ** 2)
+
+        return tropo
 
     def estimate_position(
         self,
@@ -163,17 +190,14 @@ class PositionEstimation:
             delta_x = np.ones(3)
             delta_rho = np.zeros(length)
 
-            tz = 77.6e-6 * (101725 / 294.15) * 43000 / 5
-            td = 0.373 * (2179 / 294.15**2) * 12000 / 5
-            tropo = (tz + td) * 1.001 / np.sqrt(0.002001 + np.sin(d["elevation"]) ** 2)
-            # print(f"Tropo: {tropo}")
+            if self.enable_tropo_correction:
+                tropo = self.calculate_tropo_delay(estimation_data)
 
-            # r = pseudo + c * delta_t
             r = data[:, 4] + c * data[:, 3] - tropo * 0.01
-            if self.estimate_lla:
+
+            if self.enable_iono_correction and self.estimate_lla:
                 dR = self.calculate_iono_delay(time, estimation_data)
                 r = r - dR
-            # print(f"r: {r}, dR: {dR}")
 
             for i in range(length):
                 Omega_tau = 1 * Omegae_dot * r[i] / c
@@ -212,10 +236,12 @@ class PositionEstimation:
             truth_ecef = lla_to_ecef(truth_lla)
 
             # init position correction
-            if is_init:
-                self.init_ecef_pos_bias = truth_ecef - Vector3(*x[:3])
-            if self.init_ecef_pos_bias:
-                x[:3] += self.init_ecef_pos_bias.numpy()
+            if self.enable_init_alignment:
+                if is_init:
+                    self.init_ecef_pos_bias = truth_ecef - Vector3(*x[:3])
+                if self.init_ecef_pos_bias:
+                    x[:3] += self.init_ecef_pos_bias.numpy()
+
             estimated_lla = ecef_to_lla(Vector3(*x[:3]))
             self.estimate_lla = estimated_lla
 
