@@ -173,6 +173,7 @@ def plot_gdop(df, result_file, plot_flag=True):
         plt.show()
 
 
+
 def plot_gdop_histogram(df, result_file, plot_flag=True):
     plt.figure(figsize=(10, 6))
 
@@ -186,6 +187,143 @@ def plot_gdop_histogram(df, result_file, plot_flag=True):
     plt.savefig(result_file + "gdop_histogram.png", dpi=300, bbox_inches="tight")
     if plot_flag:
         plt.show()
+
+
+#VDOP
+
+def plot_vdop(df, result_file, plot_flag=True):
+    plt.figure(figsize=(10, 6))
+
+    sns.lineplot(data=df, x="time", y="VDOP", label="VDOP")
+
+    plt.title("Vertical Dilution of Precision (VDOP) Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("VDOP Value")
+
+    plt.xticks(rotation=45)
+
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(result_file + "vdop.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
+
+
+def plot_vdop_histogram(df, result_file, plot_flag=True):
+    plt.figure(figsize=(10, 6))
+    sns.histplot(df["VDOP"], kde=True, bins=20, color="blue", label="VDOP")
+    plt.title("VDOP Histogram")
+    plt.xlabel("VDOP Value")
+    plt.ylabel("Frequency")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(result_file + "vdop_histogram.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
+
+
+#HDOP
+
+def plot_hdop(df, result_file, plot_flag=True):
+    plt.figure(figsize=(10, 6))
+
+    sns.lineplot(data=df, x="time", y="HDOP", label="HDOP")
+
+    plt.title("Horizontal Dilution of Precision (HDOP) Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("HDOP Value")
+
+    plt.xticks(rotation=45)
+
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(result_file + "hdop.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
+
+
+def plot_hdop_histogram(df, result_file, plot_flag=True):
+    plt.figure(figsize=(10, 6))
+    sns.histplot(df["HDOP"], kde=True, bins=20, color="green", label="HDOP")
+    plt.title("HDOP Histogram")
+    plt.xlabel("HDOP Value")
+    plt.ylabel("Frequency")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(result_file + "hdop_histogram.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
+
+
+#PDOP
+
+
+def plot_pdop(df, result_file, plot_flag=True):
+    plt.figure(figsize=(10, 6))
+
+    sns.lineplot(data=df, x="time", y="PDOP", label="PDOP")
+
+    plt.title("Position Dilution of Precision (PDOP) Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("PDOP Value")
+
+    plt.xticks(rotation=45)
+
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(result_file + "pdop.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
+
+
+def plot_pdop_histogram(df, result_file, plot_flag=True):
+    plt.figure(figsize=(10, 6))
+    sns.histplot(df["PDOP"], kde=True, bins=20, color="red", label="PDOP")
+    plt.title("PDOP Histogram")
+    plt.xlabel("PDOP Value")
+    plt.ylabel("Frequency")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(result_file + "pdop_histogram.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
+
+
+#TDOP 
+
+def plot_tdop(df, result_file, plot_flag=True):
+    plt.figure(figsize=(10, 6))
+
+    sns.lineplot(data=df, x="time", y="TDOP", label="TDOP")
+
+    plt.title("Time Dilution of Precision (TDOP) Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("TDOP Value")
+
+    plt.xticks(rotation=45)
+
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(result_file + "tdop.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
+
+def plot_tdop_histogram(df, result_file, plot_flag=True):
+    plt.figure(figsize=(10, 6))
+    sns.histplot(df["TDOP"], kde=True, bins=20, color="purple", label="TDOP")
+    plt.title("TDOP Histogram")
+    plt.xlabel("TDOP Value")
+    plt.ylabel("Frequency")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(result_file + "tdop_histogram.png", dpi=300, bbox_inches="tight")
+    if plot_flag:
+        plt.show()
+
 
 
 def plot_coordinates(df, result_file, plot_flag=True):
@@ -319,8 +457,8 @@ def draw_satellite_tracks(satellite_position, result_file, plot_flag=True, max_g
 
 if __name__ == "__main__":
     ##for i in range(0,8):
-    file_index = 7
-    plot_show_flag = False
+    file_index = 0
+    plot_show_flag = True
 
     nav_files = ["./nav/brdc3490.24n", "./nav/brdc3630.24n"]
     if file_index == -1 or file_index == 7:
@@ -376,6 +514,10 @@ if __name__ == "__main__":
         "truth_lon": [],
         "truth_alt": [],
         "GDOP": [],
+        "VDOP": [],  
+        "HDOP": [],  
+        "PDOP": [],  
+        "TDOP": [],
     }
 
     satellite_position = None
@@ -413,6 +555,11 @@ if __name__ == "__main__":
         )
 
         evaluation_results["GDOP"].append(estimation_result[1]["GDOP"])
+
+        evaluation_results["VDOP"].append(estimation_result[1]["VDOP"])
+        evaluation_results["HDOP"].append(estimation_result[1]["HDOP"])
+        evaluation_results["PDOP"].append(estimation_result[1]["PDOP"])
+        evaluation_results["TDOP"].append(estimation_result[1]["TDOP"])
 
         ecef_position = estimation_result[0]
         evaluation_results["ecef_x"].append(ecef_position[0])
@@ -453,7 +600,16 @@ if __name__ == "__main__":
     plot_coordinates(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_ecef_coordinates(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_gdop(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_vdop(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_hdop(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_pdop(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_tdop(df, result_file=result_file, plot_flag=plot_show_flag)
+    #histograms
     plot_gdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_vdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_hdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_pdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_tdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
     draw_satellite_tracks(
         satellite_position, result_file=result_file, plot_flag=plot_show_flag
     )

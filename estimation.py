@@ -17,8 +17,8 @@ class PositionEstimation:
         nav_file: str,
         track_file: str,
         enable_init_alignment: bool = True,
-        enable_iono_correction: bool = True,
-        enable_tropo_correction: bool = True,
+        enable_iono_correction: bool = False, #True,
+        enable_tropo_correction: bool = False, #True,
         epsilon: float = 1e-8,
         max_iterations: int = 1000,
         threshold: float = 0,
@@ -189,7 +189,7 @@ class PositionEstimation:
             x = np.zeros(4)
             delta_x = np.ones(3)
             delta_rho = np.zeros(length)
-
+            tropo = 0
             if self.enable_tropo_correction:
                 tropo = self.calculate_tropo_delay(estimation_data)
 
@@ -413,8 +413,9 @@ if __name__ == "__main__":
     truth = Vector3(-289833.9300, -2756501.0600, 5725162.2200)
     nav_file = "brdc2750.22n"
     obs_file = "bake2750.22o"
-
-    estimation = PositionEstimation(truth, obs_file)
+    # //track_file = ""
+    
+    estimation = PositionEstimation(truth, obs_file)    
     observations = estimation.load_observation_data()
     time = observations[0][0]
     observation = observations[0][1]
