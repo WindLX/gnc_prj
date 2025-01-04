@@ -1,5 +1,6 @@
 import re
 from enum import Enum
+from pathlib import Path
 from dataclasses import dataclass
 
 import numpy as np
@@ -97,7 +98,7 @@ class RINEXNavigationData:
 
     @staticmethod
     def read_rinex_nav(
-        nav_file: str, time: list
+        nav_file: Path, time: list
     ) -> tuple[tuple, dict[int, "RINEXNavigationData"]]:
         """
         Reads RINEX navigation file and extracts ephemeris data for given time.
@@ -296,7 +297,7 @@ class RINEXObservationData:
 
     @staticmethod
     def read_observation_file(
-        obs_file: str,
+        obs_file: Path,
     ) -> list[tuple[list, list["RINEXObservationData"]]]:
         """
         Reads a RINEX observation file and extracts observation data at specified time intervals.
@@ -358,7 +359,7 @@ class RINEXObservationData:
 
 if __name__ == "__main__":
     t = [2024, 12, 7, 0, 0, 0]
-    head, rinex = RINEXNavigationData.read_rinex_nav("./nav/brdc3490.24n")
+    head, rinex = RINEXNavigationData.read_rinex_nav("./data/navigations/brdc3490.24n")
     for key, value in rinex.items():
         print(f"{key}:\t{value}")
 
@@ -366,7 +367,9 @@ if __name__ == "__main__":
     for svprn, data in sv.items():
         print(f"{svprn}:\t{data}")
 
-    obs = RINEXObservationData.read_observation_file("gnss_log_2024_12_07_16_26_41.24o")
+    obs = RINEXObservationData.read_observation_file(
+        "./data/observations/1/gnss_log_2024_12_07_16_26_41.24o"
+    )
     for data in obs:
         print(data)
         print()

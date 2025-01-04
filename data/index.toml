@@ -1,0 +1,50 @@
+[[1]]
+nav = "./navigations/brdc3490.24n"
+obs = "./observations/1/gnss_log_2024_12_14_15_17_38.24o"
+kml = "./observations/1/doc.kml"
+
+
+[[2]]
+nav = "./navigations/brdc3490.24n"
+obs = "./observations/2/gnss_log_2024_12_14_15_28_53.24o"
+kml = "./observations/2/doc.kml"
+
+[[3]]
+nav = "./navigations/brdc3490.24n"
+obs = "./observations/3/gnss_log_2024_12_14_15_46_31.24o"
+kml = "./observations/3/doc.kml"
+
+[[4]]
+nav = "./navigations/brdc3490.24n"
+obs = "./observations/4/gnss_log_2024_12_14_16_02_14.24o"
+kml = "./observations/4/doc.kml"
+
+[[5]]
+nav = "./navigations/brdc3490.24n"
+obs = "./observations/5/gnss_log_2024_12_14_16_14_30.24o"
+kml = "./observations/5/doc.kml"
+
+[[6]]
+nav = "./navigations/brdc3490.24n"
+obs = "./observations/6/gnss_log_2024_12_14_16_32_45.24o"
+kml = "./observations/6/doc.kml"
+
+[[7]]
+nav = "./navigations/brdc3490.24n"
+obs = "./observations/7/gnss_log_2024_12_14_16_49_34.24o"
+kml = "./observations/7/doc.kml"
+
+[[8]]
+nav = "./navigations/brdc3630.24n"
+obs = "./observations/8/gnss_log_2024_12_28_14_16_01.24o"
+kml = "./observations/8/doc.kml"
+
+[[9]]
+nav = "./navigations/brdc0040.25n"
+obs = "./observations/9/gnss_log_2025_01_04_18_43_56.25o"
+kml = "./observations/9/doc.kml"
+
+[[10]]
+nav = "./navigations/brdc0040.25n"
+obs = "./observations/10/gnss_log_2025_01_04_19_03_16.25o"
+kml = "./observations/10/doc.kml"

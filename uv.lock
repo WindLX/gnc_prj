@@ -141,6 +141,7 @@ dependencies = [
     { name = "python-dotenv" },
     { name = "requests" },
     { name = "seaborn" },
+    { name = "toml" },
     { name = "tqdm" },
 ]
 
@@ -153,6 +154,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "toml", specifier = ">=0.10.2" },
     { name = "tqdm", specifier = ">=4.67.1" },
 ]
 
@@ -381,6 +383,7 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e9/0a/accbebed526158ab2aedd5c84d238159754bd99f481082b3fe7f374c6a3b/PyQt6-6.8.0.tar.gz", hash = "sha256:6d8628de4c2a050f0b74462e4c9cb97f839bf6ffabbca91711722ffb281570d9", size = 1061357 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d6/ae/30f6f40c8cdf3d5319ec7add820c6edf96d8ed2461984fd548af9e2d9b51/PyQt6-6.8.0-cp39-abi3-macosx_10_14_universal2.whl", hash = "sha256:8c5c05f5fdff31a5887dbc29b27615b09df467631238d7b449283809ffca6228", size = 12104917 },
+    { url = "https://files.pythonhosted.org/packages/06/07/08229a8ae164a0538b2c1ab16c47d39979eb306feab641280194b3d7938b/PyQt6-6.8.0-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:3a4354816f11e812b727206a9ea6e79ff3774f1bb7228ad4b9318442d2c64ff9", size = 8165074 },
     { url = "https://files.pythonhosted.org/packages/b4/7a/a3ecac3327345dde8f34e781d6db1339e4e3b8411ac8ae9747822a0d44e9/PyQt6-6.8.0-cp39-abi3-manylinux_2_35_x86_64.whl", hash = "sha256:452bae5840077bf0f146c798d7777f70d7bdd0c7dcfa9ee7a415c1daf2d10038", size = 8322144 },
     { url = "https://files.pythonhosted.org/packages/d0/52/1e60e38d216c232af83ac16bedf1ece419812368220485fc25af80c7a5d7/PyQt6-6.8.0-cp39-abi3-manylinux_2_39_aarch64.whl", hash = "sha256:cf7123caea14e7ecf10bd12cae48e8d9970ef7caf627bc7d7988b0baa209adb3", size = 8101586 },
     { url = "https://files.pythonhosted.org/packages/eb/73/9bae1b8daedf2acff5a3668eae84783720ff513e402b0448a906ab3d5479/PyQt6-6.8.0-cp39-abi3-win_amd64.whl", hash = "sha256:a9913d479f1ffee804bf7f232079baea4fb4b221a8f4890117588917a54ea30d", size = 6661265 },
@@ -488,11 +491,20 @@ wheels = [
 ]
 
 [[package]]
+name = "toml"
+version = "0.10.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f", size = 22253 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/44/6f/7120676b6d73228c96e17f1f794d8ab046fc910d781c8d151120c3f1569e/toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b", size = 16588 },
+]
+
+[[package]]
 name = "tqdm"
 version = "4.67.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "platform_system == 'Windows'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a8/4b/29b4ef32e036bb34e4ab51796dd745cdba7ed47ad142a9f4a1eb8e0c744d/tqdm-4.67.1.tar.gz", hash = "sha256:f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2", size = 169737 }
 wheels = [

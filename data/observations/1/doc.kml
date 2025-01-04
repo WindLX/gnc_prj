@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<kml xmlns="http://www.opengis.net/kml/2.3"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:opentracks="http://opentracksapp.com/xmlschemas/v1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.opengis.net/kml/2.3 http://schemas.opengis.net/kml/2.3/ogckml23.xsd
+                        http://opentracksapp.com/xmlschemas/v1 http://opentracksapp.com/xmlschemas/OpenTracks_v1.xsd">
+
+<Document>
+<open>1</open>
+<visibility>1</visibility>
+<name><![CDATA[2024-12-14T15:17+08]]></name>
+<atom:generator><![CDATA[OpenTracks]]></atom:generator>
+<Style id="track">
+<LineStyle><color>7f0000ff</color><width>4</width></LineStyle>
+<IconStyle>
+<scale>1.3</scale>
+<Icon />
+</IconStyle>
+</Style>
+<Style id="waypoint"><IconStyle>
+<Icon />
+</IconStyle></Style>
+<Schema id="schema">
+<SimpleArrayField name="speed" type="float">
+<displayName><![CDATA[Speed (m/s)]]></displayName>
+</SimpleArrayField>
+<SimpleArrayField name="power" type="float">
+<displayName><![CDATA[Power (W)]]></displayName>
+</SimpleArrayField>
+<SimpleArrayField name="cadence" type="float">
+<displayName><![CDATA[Cadence (rpm)]]></displayName>
+</SimpleArrayField>
+<SimpleArrayField name="heartrate" type="float">
+<displayName><![CDATA[Heart rate (bpm)]]></displayName>
+</SimpleArrayField>
+</Schema>
+<Placemark>
+<name><![CDATA[2024-12-14T15:17+08]]></name>
+<description><![CDATA[]]></description>
+<opentracks:trackid>42ab325b-3bf4-42d4-bdaf-c460d6bfe1c1</opentracks:trackid>
+<styleUrl>#track</styleUrl>
+<ExtendedData>
+<Data name="activityType"><value><![CDATA[unknown]]></value></Data>
+</ExtendedData>
+<ExtendedData>
+<Data name="type"><value><![CDATA[unknown]]></value></Data>
+</ExtendedData>
+<MultiTrack>
+<altitudeMode>absolute</altitudeMode>
+<interpolate>1</interpolate>
+<Track>
+<when>2024-12-14T15:17:46.294+08:00</when>
+<coord/>
+<when>2024-12-14T15:17:46.942+08:00</when>
+<coord>121.441405 31.0259 17.5286865234375</coord>
+<when>2024-12-14T15:17:56.913+08:00</when>
+<coord>121.441464 31.025969 14.977783203125</coord>
+<when>2024-12-14T15:17:56.954+08:00</when>
+<coord>121.441464 31.025969 14.977783203125</coord>
+<when>2024-12-14T15:18:04.916+08:00</when>
+<coord>121.441557 31.026012 15.61981201171875</coord>
+<when>2024-12-14T15:18:12.91+08:00</when>
+<coord>121.441662 31.026005 13.845947265625</coord>
+<when>2024-12-14T15:18:20.905+08:00</when>
+<coord>121.44176 31.026049 14.4847412109375</coord>
+<when>2024-12-14T15:18:29.903+08:00</when>
+<coord>121.441849 31.026098 15.448974609375</coord>
+<when>2024-12-14T15:18:37.912+08:00</when>
+<coord>121.441945 31.026139 14.218017578125</coord>
+<when>2024-12-14T15:18:46.908+08:00</when>
+<coord>121.442043 31.026179 13.033203125</coord>
+<when>2024-12-14T15:18:55.913+08:00</when>
+<coord>121.442148 31.026215 15.86724853515625</coord>
+<when>2024-12-14T15:19:04.907+08:00</when>
+<coord>121.442254 31.026227 15.04345703125</coord>
+<when>2024-12-14T15:19:13.908+08:00</when>
+<coord>121.442359 31.026251 14.9527587890625</coord>
+<when>2024-12-14T15:19:21.902+08:00</when>
+<coord>121.442463 31.026277 14.4852294921875</coord>
+<when>2024-12-14T15:19:30.91+08:00</when>
+<coord>121.442573 31.026312 15.84320068359375</coord>
+<when>2024-12-14T15:19:38.909+08:00</when>
+<coord>121.442683 31.026332 14.6866455078125</coord>
+<when>2024-12-14T15:19:46.915+08:00</when>
+<coord>121.442796 31.026322 12.8028564453125</coord>
+<when>2024-12-14T15:19:55.911+08:00</when>
+<coord>121.442905 31.026285 12.7410888671875</coord>
+<when>2024-12-14T15:20:05.912+08:00</when>
+<coord>121.443008 31.026253 15.49859619140625</coord>
+<when>2024-12-14T15:20:14.911+08:00</when>
+<coord>121.44308 31.026169 16.31500244140625</coord>
+<when>2024-12-14T15:20:22.91+08:00</when>
+<coord>121.443155 31.026091 17.22802734375</coord>
+<when>2024-12-14T15:20:30.917+08:00</when>
+<coord>121.443259 31.026042 18.61798095703125</coord>
+<when>2024-12-14T15:20:38.909+08:00</when>
+<coord>121.443365 31.026059 16.78240966796875</coord>
+<when>2024-12-14T15:20:47.915+08:00</when>
+<coord>121.443448 31.026093 14.036865234375</coord>
+<when>2024-12-14T15:20:48.918+08:00</when>
+<coord>121.443448 31.026093 14.036865234375</coord>
+<when>2024-12-14T15:20:59.92+08:00</when>
+<coord>121.44353 31.026157 12.96173095703125</coord>
+<when>2024-12-14T15:21:09.91+08:00</when>
+<coord>121.443576 31.026239 12.8865966796875</coord>
+<when>2024-12-14T15:21:19.919+08:00</when>
+<coord>121.443647 31.026308 11.8992919921875</coord>
+<when>2024-12-14T15:21:28.909+08:00</when>
+<coord>121.44368 31.026397 11.58233642578125</coord>
+<when>2024-12-14T15:21:38.91+08:00</when>
+<coord>121.443702 31.026391 11.232940673828125</coord>
+<when>2024-12-14T15:21:38.918+08:00</when>
+<coord>121.443702 31.026391 11.232940673828125</coord>
+<when>2024-12-14T15:21:51.919+08:00</when>
+<coord>121.443771 31.026467 7.2408447265625</coord>
+<when>2024-12-14T15:22:01.919+08:00</when>
+<coord>121.44384 31.026531 12.42242431640625</coord>
+<when>2024-12-14T15:22:01.927+08:00</when>
+<coord>121.44384 31.026531 12.42242431640625</coord>
+<when>2024-12-14T15:22:09.911+08:00</when>
+<coord>121.443941 31.026558 15.2799072265625</coord>
+<when>2024-12-14T15:22:19.916+08:00</when>
+<coord>121.444015 31.026589 13.65826416015625</coord>
+<when>2024-12-14T15:22:19.922+08:00</when>
+<coord>121.444015 31.026589 13.65826416015625</coord>
+<when>2024-12-14T15:22:27.915+08:00</when>
+<coord>121.444033 31.026683 12.802490234375</coord>
+<when>2024-12-14T15:22:37.916+08:00</when>
+<coord>121.444036 31.026778 13.54278564453125</coord>
+<when>2024-12-14T15:22:45.919+08:00</when>
+<coord>121.444031 31.026874 14.744140625</coord>
+<when>2024-12-14T15:22:54.915+08:00</when>
+<coord>121.444023 31.026973 16.42034912109375</coord>
+<when>2024-12-14T15:23:04.919+08:00</when>
+<coord>121.443992 31.027069 17.9617919921875</coord>
+<when>2024-12-14T15:23:13.922+08:00</when>
+<coord>121.443943 31.027152 17.5313720703125</coord>
+<when>2024-12-14T15:23:19.917+08:00</when>
+<coord>121.443931 31.027251 19.62158203125</coord>
+<when>2024-12-14T15:23:28.917+08:00</when>
+<coord>121.44391 31.02734 15.85040283203125</coord>
+<when>2024-12-14T15:23:36.916+08:00</when>
+<coord>121.443899 31.027434 14.043212890625</coord>
+<when>2024-12-14T15:23:44.912+08:00</when>
+<coord>121.443877 31.027531 14.0736083984375</coord>
+<when>2024-12-14T15:23:52.92+08:00</when>
+<coord>121.443864 31.027623 19.04522705078125</coord>
+<when>2024-12-14T15:24:00.91+08:00</when>
+<coord>121.443835 31.027712 23.23272705078125</coord>
+<when>2024-12-14T15:24:08.911+08:00</when>
+<coord>121.44382 31.027813 24.68585205078125</coord>
+<when>2024-12-14T15:24:17.918+08:00</when>
+<coord>121.443784 31.02789 25.80694580078125</coord>
+<when>2024-12-14T15:24:18.922+08:00</when>
+<coord>121.443784 31.02789 25.80694580078125</coord>
+<when>2024-12-14T15:24:46.899+08:00</when>
+<coord>121.443691 31.027865 21.7821044921875</coord>
+<when>2024-12-14T15:24:47.063+08:00</when>
+<coord>121.443691 31.027865 21.7821044921875</coord>
+<ExtendedData>
+<SchemaData schemaUrl="#schema">
+<SimpleArrayData name="trackpoint_type">
+<value>SEGMENT_START_MANUAL</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>IDLE</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>IDLE</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>IDLE</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>IDLE</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>IDLE</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>IDLE</value>
+<value>TRACKPOINT</value>
+<value>SEGMENT_END_MANUAL</value>
+</SimpleArrayData>
+<SimpleArrayData name="speed">
+<value />
+<value>0</value>
+<value>1.4</value>
+<value>1.4</value>
+<value>1.2</value>
+<value>1.3</value>
+<value>1.2</value>
+<value>1.1</value>
+<value>1.1</value>
+<value>1</value>
+<value>1.1</value>
+<value>1.1</value>
+<value>1.1</value>
+<value>1.1</value>
+<value>1.1</value>
+<value>1.2</value>
+<value>1.3</value>
+<value>1.2</value>
+<value>1</value>
+<value>1.4</value>
+<value>1.5</value>
+<value>1.4</value>
+<value>1.4</value>
+<value>0.9</value>
+<value>0.9</value>
+<value>1.1</value>
+<value>0.9</value>
+<value>1.2</value>
+<value>1.2</value>
+<value>0</value>
+<value>0</value>
+<value>1</value>
+<value>0.6</value>
+<value>0.6</value>
+<value>1.1</value>
+<value>1.7</value>
+<value>1.7</value>
+<value>1.2</value>
+<value>1.1</value>
+<value>1.1</value>
+<value>1</value>
+<value>1.3</value>
+<value>1.3</value>
+<value>2.2</value>
+<value>1.4</value>
+<value>1.1</value>
+<value>1.2</value>
+<value>1.2</value>
+<value>1.1</value>
+<value>1.1</value>
+<value>0.3</value>
+<value>0.3</value>
+<value>0</value>
+<value>0</value>
+</SimpleArrayData>
+<SimpleArrayData name="accuracy_horizontal">
+<value />
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.9</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>4</value>
+<value>4</value>
+<value>4</value>
+<value>4.1</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+<value>3.8</value>
+</SimpleArrayData>
+</SchemaData>
+</ExtendedData>
+</Track>
+</MultiTrack>
+</Placemark>
+</Document>
+</kml>

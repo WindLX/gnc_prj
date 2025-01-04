@@ -1,5 +1,6 @@
 import re
 import bisect
+from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
@@ -14,7 +15,7 @@ class TrackData:
 
 
 class KML:
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: Path):
         self.file_path = file_path
         self.track_data: list[TrackData] = []
 

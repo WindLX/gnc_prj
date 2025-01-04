@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<kml xmlns="http://www.opengis.net/kml/2.3"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:opentracks="http://opentracksapp.com/xmlschemas/v1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.opengis.net/kml/2.3 http://schemas.opengis.net/kml/2.3/ogckml23.xsd
+                        http://opentracksapp.com/xmlschemas/v1 http://opentracksapp.com/xmlschemas/OpenTracks_v1.xsd">
+
+<Document>
+<open>1</open>
+<visibility>1</visibility>
+<name><![CDATA[2025-01-04T18:44+08]]></name>
+<atom:generator><![CDATA[OpenTracks]]></atom:generator>
+<Style id="track">
+<LineStyle><color>7f0000ff</color><width>4</width></LineStyle>
+<IconStyle>
+<scale>1.3</scale>
+<Icon />
+</IconStyle>
+</Style>
+<Style id="waypoint"><IconStyle>
+<Icon />
+</IconStyle></Style>
+<Schema id="schema">
+<SimpleArrayField name="speed" type="float">
+<displayName><![CDATA[速度（米/秒）]]></displayName>
+</SimpleArrayField>
+<SimpleArrayField name="power" type="float">
+<displayName><![CDATA[功率（瓦）]]></displayName>
+</SimpleArrayField>
+<SimpleArrayField name="cadence" type="float">
+<displayName><![CDATA[蹬踏频率（转数/分钟）]]></displayName>
+</SimpleArrayField>
+<SimpleArrayField name="heartrate" type="float">
+<displayName><![CDATA[心率（次/分钟）]]></displayName>
+</SimpleArrayField>
+</Schema>
+<Placemark>
+<name><![CDATA[2025-01-04T18:44+08]]></name>
+<description><![CDATA[]]></description>
+<opentracks:trackid>396b72fb-7454-4228-812d-0544a0982b48</opentracks:trackid>
+<styleUrl>#track</styleUrl>
+<ExtendedData>
+<Data name="activityType"><value><![CDATA[unknown]]></value></Data>
+</ExtendedData>
+<ExtendedData>
+<Data name="type"><value><![CDATA[未知]]></value></Data>
+</ExtendedData>
+<MultiTrack>
+<altitudeMode>absolute</altitudeMode>
+<interpolate>1</interpolate>
+<Track>
+<when>2025-01-04T18:44:00.339+08:00</when>
+<coord/>
+<when>2025-01-04T18:44:00.922+08:00</when>
+<coord>121.433221 31.024189 2.4789113998413086</coord>
+<when>2025-01-04T18:44:10.412+08:00</when>
+<coord>121.433319 31.024234 6.640793800354004</coord>
+<when>2025-01-04T18:44:14.366+08:00</when>
+<coord>121.43345 31.024269 11.993605613708496</coord>
+<when>2025-01-04T18:44:17.377+08:00</when>
+<coord>121.433552 31.024294 13.4500093460083</coord>
+<when>2025-01-04T18:44:21.38+08:00</when>
+<coord>121.433659 31.024325 13.956730842590332</coord>
+<when>2025-01-04T18:44:25.386+08:00</when>
+<coord>121.433776 31.024355 14.387991905212402</coord>
+<when>2025-01-04T18:44:29.382+08:00</when>
+<coord>121.433895 31.024393 14.79347038269043</coord>
+<when>2025-01-04T18:44:32.462+08:00</when>
+<coord>121.434005 31.024413 15.476882934570312</coord>
+<when>2025-01-04T18:44:35.453+08:00</when>
+<coord>121.434114 31.024441 17.399385452270508</coord>
+<when>2025-01-04T18:44:39.422+08:00</when>
+<coord>121.43423 31.024485 17.837242126464844</coord>
+<when>2025-01-04T18:44:43.422+08:00</when>
+<coord>121.434354 31.024536 19.40081787109375</coord>
+<when>2025-01-04T18:44:46.45+08:00</when>
+<coord>121.434459 31.024557 20.13033676147461</coord>
+<when>2025-01-04T18:44:50.426+08:00</when>
+<coord>121.434575 31.024597 20.117284774780273</coord>
+<when>2025-01-04T18:44:53.415+08:00</when>
+<coord>121.434682 31.024616 20.573171615600586</coord>
+<when>2025-01-04T18:44:57.412+08:00</when>
+<coord>121.434813 31.024653 20.065719604492188</coord>
+<when>2025-01-04T18:45:01.417+08:00</when>
+<coord>121.434937 31.024694 19.957199096679688</coord>
+<when>2025-01-04T18:45:05.443+08:00</when>
+<coord>121.435062 31.024733 19.182170867919922</coord>
+<when>2025-01-04T18:45:09.42+08:00</when>
+<coord>121.435179 31.024773 19.24677276611328</coord>
+<when>2025-01-04T18:45:13.419+08:00</when>
+<coord>121.435296 31.024794 18.942323684692383</coord>
+<when>2025-01-04T18:45:16.436+08:00</when>
+<coord>121.435411 31.024828 18.181364059448242</coord>
+<when>2025-01-04T18:45:19.417+08:00</when>
+<coord>121.43553 31.024853 17.87377166748047</coord>
+<when>2025-01-04T18:45:23.434+08:00</when>
+<coord>121.435655 31.024883 18.42406463623047</coord>
+<when>2025-01-04T18:45:27.423+08:00</when>
+<coord>121.435757 31.024939 19.102548599243164</coord>
+<when>2025-01-04T18:45:31.42+08:00</when>
+<coord>121.435858 31.024994 19.480653762817383</coord>
+<when>2025-01-04T18:45:35.412+08:00</when>
+<coord>121.43596 31.025048 20.69927215576172</coord>
+<when>2025-01-04T18:45:39.441+08:00</when>
+<coord>121.436072 31.025083 21.476308822631836</coord>
+<when>2025-01-04T18:45:43.436+08:00</when>
+<coord>121.436171 31.025115 22.364402770996094</coord>
+<when>2025-01-04T18:45:47.427+08:00</when>
+<coord>121.436284 31.025151 23.832157135009766</coord>
+<when>2025-01-04T18:45:51.42+08:00</when>
+<coord>121.436405 31.025196 24.61239242553711</coord>
+<when>2025-01-04T18:45:54.42+08:00</when>
+<coord>121.436525 31.025235 24.015085220336914</coord>
+<when>2025-01-04T18:45:57.426+08:00</when>
+<coord>121.436664 31.025278 23.5230770111084</coord>
+<when>2025-01-04T18:46:00.437+08:00</when>
+<coord>121.436802 31.025324 23.424484252929688</coord>
+<when>2025-01-04T18:46:03.426+08:00</when>
+<coord>121.436927 31.025367 23.039379119873047</coord>
+<when>2025-01-04T18:46:06.422+08:00</when>
+<coord>121.437058 31.025401 22.60545539855957</coord>
+<when>2025-01-04T18:46:09.432+08:00</when>
+<coord>121.437183 31.025442 21.910167694091797</coord>
+<when>2025-01-04T18:46:12.421+08:00</when>
+<coord>121.437315 31.025483 21.20476531982422</coord>
+<when>2025-01-04T18:46:15.416+08:00</when>
+<coord>121.437443 31.025527 20.0576114654541</coord>
+<when>2025-01-04T18:46:18.419+08:00</when>
+<coord>121.437567 31.025567 19.816572189331055</coord>
+<when>2025-01-04T18:46:21.415+08:00</when>
+<coord>121.437685 31.02561 19.261112213134766</coord>
+<when>2025-01-04T18:46:24.403+08:00</when>
+<coord>121.437795 31.025651 18.780025482177734</coord>
+<when>2025-01-04T18:46:27.416+08:00</when>
+<coord>121.437896 31.025679 19.11419105529785</coord>
+<when>2025-01-04T18:46:31.436+08:00</when>
+<coord>121.438 31.025719 18.569318771362305</coord>
+<when>2025-01-04T18:46:34.426+08:00</when>
+<coord>121.438107 31.025749 18.844684600830078</coord>
+<when>2025-01-04T18:46:37.431+08:00</when>
+<coord>121.438217 31.025782 18.845741271972656</coord>
+<when>2025-01-04T18:46:40.458+08:00</when>
+<coord>121.438321 31.025819 18.685415267944336</coord>
+<when>2025-01-04T18:46:43.456+08:00</when>
+<coord>121.438424 31.025851 18.654891967773438</coord>
+<when>2025-01-04T18:46:46.459+08:00</when>
+<coord>121.438523 31.025884 18.24750518798828</coord>
+<when>2025-01-04T18:46:49.44+08:00</when>
+<coord>121.438631 31.025915 18.457298278808594</coord>
+<when>2025-01-04T18:46:52.425+08:00</when>
+<coord>121.438741 31.025946 19.02469825744629</coord>
+<when>2025-01-04T18:46:55.374+08:00</when>
+<coord>121.438849 31.02598 19.93577003479004</coord>
+<when>2025-01-04T18:46:58.412+08:00</when>
+<coord>121.438958 31.026015 20.325138092041016</coord>
+<when>2025-01-04T18:47:01.392+08:00</when>
+<coord>121.439065 31.026047 20.487794876098633</coord>
+<when>2025-01-04T18:47:04.433+08:00</when>
+<coord>121.439179 31.026081 20.578067779541016</coord>
+<when>2025-01-04T18:47:07.39+08:00</when>
+<coord>121.43929 31.026117 19.804195404052734</coord>
+<when>2025-01-04T18:47:10.387+08:00</when>
+<coord>121.439398 31.026153 19.093847274780273</coord>
+<when>2025-01-04T18:47:13.4+08:00</when>
+<coord>121.439505 31.026189 18.498472213745117</coord>
+<when>2025-01-04T18:47:16.357+08:00</when>
+<coord>121.439606 31.026224 18.408864974975586</coord>
+<when>2025-01-04T18:47:19.386+08:00</when>
+<coord>121.43971 31.026258 18.15338134765625</coord>
+<when>2025-01-04T18:47:22.389+08:00</when>
+<coord>121.439813 31.026292 17.533817291259766</coord>
+<when>2025-01-04T18:47:25.417+08:00</when>
+<coord>121.439913 31.026321 17.96493148803711</coord>
+<when>2025-01-04T18:47:29.426+08:00</when>
+<coord>121.440047 31.026343 18.823389053344727</coord>
+<when>2025-01-04T18:47:33.378+08:00</when>
+<coord>121.440154 31.026385 20.18026351928711</coord>
+<when>2025-01-04T18:47:37.381+08:00</when>
+<coord>121.440264 31.026413 21.00680923461914</coord>
+<when>2025-01-04T18:47:41.357+08:00</when>
+<coord>121.440363 31.026465 21.33360481262207</coord>
+<when>2025-01-04T18:47:45.36+08:00</when>
+<coord>121.440469 31.026527 21.908876419067383</coord>
+<when>2025-01-04T18:47:49.377+08:00</when>
+<coord>121.440573 31.0266 21.81507682800293</coord>
+<when>2025-01-04T18:47:53.42+08:00</when>
+<coord>121.440681 31.026676 21.93346405029297</coord>
+<when>2025-01-04T18:47:57.418+08:00</when>
+<coord>121.440773 31.026757 21.738937377929688</coord>
+<when>2025-01-04T18:48:01.431+08:00</when>
+<coord>121.440854 31.026834 20.808807373046875</coord>
+<when>2025-01-04T18:48:05.427+08:00</when>
+<coord>121.440951 31.026913 20.144895553588867</coord>
+<when>2025-01-04T18:48:09.434+08:00</when>
+<coord>121.441037 31.026998 20.77741241455078</coord>
+<when>2025-01-04T18:48:13.428+08:00</when>
+<coord>121.441126 31.027091 21.465328216552734</coord>
+<when>2025-01-04T18:48:16.425+08:00</when>
+<coord>121.441184 31.027169 21.04387092590332</coord>
+<when>2025-01-04T18:48:19.445+08:00</when>
+<coord>121.441251 31.027254 21.369827270507812</coord>
+<when>2025-01-04T18:48:23.432+08:00</when>
+<coord>121.441319 31.027354 21.61990737915039</coord>
+<when>2025-01-04T18:48:26.439+08:00</when>
+<coord>121.441377 31.027431 22.342945098876953</coord>
+<when>2025-01-04T18:48:29.429+08:00</when>
+<coord>121.441429 31.02751 23.200498580932617</coord>
+<when>2025-01-04T18:48:33.432+08:00</when>
+<coord>121.441493 31.027614 24.11491584777832</coord>
+<when>2025-01-04T18:48:37.439+08:00</when>
+<coord>121.441543 31.027723 24.651277542114258</coord>
+<when>2025-01-04T18:48:41.427+08:00</when>
+<coord>121.441585 31.027834 25.185985565185547</coord>
+<when>2025-01-04T18:48:45.415+08:00</when>
+<coord>121.441617 31.027946 25.429155349731445</coord>
+<when>2025-01-04T18:48:49.428+08:00</when>
+<coord>121.441616 31.028061 23.604101181030273</coord>
+<when>2025-01-04T18:48:53.419+08:00</when>
+<coord>121.441629 31.028171 22.634899139404297</coord>
+<when>2025-01-04T18:48:57.437+08:00</when>
+<coord>121.441632 31.028287 20.887046813964844</coord>
+<when>2025-01-04T18:49:01.414+08:00</when>
+<coord>121.441647 31.028406 20.257068634033203</coord>
+<when>2025-01-04T18:49:05.429+08:00</when>
+<coord>121.441641 31.028522 20.32759666442871</coord>
+<when>2025-01-04T18:49:09.415+08:00</when>
+<coord>121.441632 31.02864 19.813148498535156</coord>
+<when>2025-01-04T18:49:12.416+08:00</when>
+<coord>121.441616 31.02873 19.05837631225586</coord>
+<when>2025-01-04T18:49:16.418+08:00</when>
+<coord>121.441596 31.028846 18.395362854003906</coord>
+<when>2025-01-04T18:49:20.432+08:00</when>
+<coord>121.441571 31.028948 18.177745819091797</coord>
+<when>2025-01-04T18:49:24.414+08:00</when>
+<coord>121.441542 31.029059 17.512310028076172</coord>
+<when>2025-01-04T18:49:28.405+08:00</when>
+<coord>121.441503 31.029159 17.057788848876953</coord>
+<when>2025-01-04T18:49:32.443+08:00</when>
+<coord>121.441467 31.029254 16.36015510559082</coord>
+<when>2025-01-04T18:49:36.435+08:00</when>
+<coord>121.441429 31.029358 16.93645477294922</coord>
+<when>2025-01-04T18:49:40.411+08:00</when>
+<coord>121.441384 31.029455 16.599529266357422</coord>
+<when>2025-01-04T18:49:44.803+08:00</when>
+<coord>121.441336 31.029552 15.73572063446045</coord>
+<when>2025-01-04T18:49:48.426+08:00</when>
+<coord>121.441286 31.029632 15.930575370788574</coord>
+<when>2025-01-04T18:49:53.437+08:00</when>
+<coord>121.441226 31.029721 16.039880752563477</coord>
+<when>2025-01-04T18:49:58.447+08:00</when>
+<coord>121.44116 31.029808 16.17707061767578</coord>
+<when>2025-01-04T18:50:03.414+08:00</when>
+<coord>121.441093 31.029889 15.267683029174805</coord>
+<when>2025-01-04T18:50:06.43+08:00</when>
+<coord>121.441015 31.029969 15.42403507232666</coord>
+<when>2025-01-04T18:50:09.42+08:00</when>
+<coord>121.440946 31.030039 15.498539924621582</coord>
+<when>2025-01-04T18:50:13.439+08:00</when>
+<coord>121.440874 31.030114 14.15433120727539</coord>
+<when>2025-01-04T18:50:17.432+08:00</when>
+<coord>121.440797 31.030183 13.559048652648926</coord>
+<when>2025-01-04T18:50:21.413+08:00</when>
+<coord>121.440708 31.030266 13.927318572998047</coord>
+<when>2025-01-04T18:50:25.411+08:00</when>
+<coord>121.440606 31.030335 13.446478843688965</coord>
+<when>2025-01-04T18:50:28.414+08:00</when>
+<coord>121.440521 31.03039 13.640517234802246</coord>
+<when>2025-01-04T18:50:32.431+08:00</when>
+<coord>121.440425 31.030454 13.396379470825195</coord>
+<when>2025-01-04T18:50:36.426+08:00</when>
+<coord>121.440339 31.030514 13.479056358337402</coord>
+<when>2025-01-04T18:50:40.436+08:00</when>
+<coord>121.440242 31.030558 13.43435001373291</coord>
+<when>2025-01-04T18:50:44.424+08:00</when>
+<coord>121.440146 31.030615 12.845890998840332</coord>
+<when>2025-01-04T18:50:48.428+08:00</when>
+<coord>121.440042 31.030661 12.227545738220215</coord>
+<when>2025-01-04T18:50:53.421+08:00</when>
+<coord>121.439934 31.030701 12.160822868347168</coord>
+<when>2025-01-04T18:50:57.429+08:00</when>
+<coord>121.439832 31.030739 12.554201126098633</coord>
+<when>2025-01-04T18:51:01.429+08:00</when>
+<coord>121.439737 31.030789 12.839385986328125</coord>
+<when>2025-01-04T18:51:06.424+08:00</when>
+<coord>121.439642 31.030846 13.554424285888672</coord>
+<when>2025-01-04T18:51:13.419+08:00</when>
+<coord>121.43967 31.030935 13.107856750488281</coord>
+<when>2025-01-04T18:51:19.439+08:00</when>
+<coord>121.439711 31.031022 12.697905540466309</coord>
+<when>2025-01-04T18:51:29.383+08:00</when>
+<coord>121.439739 31.031066 14.707734107971191</coord>
+<when>2025-01-04T18:51:29.449+08:00</when>
+<coord>121.439739 31.031066 14.707734107971191</coord>
+<when>2025-01-04T18:51:31.387+08:00</when>
+<coord>121.439748 31.031085 15.116250038146973</coord>
+<when>2025-01-04T18:51:31.944+08:00</when>
+<coord>121.439748 31.031085 15.116250038146973</coord>
+<ExtendedData>
+<SchemaData schemaUrl="#schema">
+<SimpleArrayData name="trackpoint_type">
+<value>SEGMENT_START_MANUAL</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>TRACKPOINT</value>
+<value>IDLE</value>
+<value>TRACKPOINT</value>
+<value>SEGMENT_END_MANUAL</value>
+</SimpleArrayData>
+<SimpleArrayData name="speed">
+<value />
+<value>0.1</value>
+<value>1.5</value>
+<value>2.7</value>
+<value>2.2</value>
+<value>2.6</value>
+<value>2.7</value>
+<value>2.8</value>
+<value>3.2</value>
+<value>3.1</value>
+<value>3</value>
+<value>3.1</value>
+<value>3</value>
+<value>3.1</value>
+<value>3.2</value>
+<value>3.3</value>
+<value>3</value>
+<value>2.8</value>
+<value>2.6</value>
+<value>2.6</value>
+<value>2.9</value>
+<value>2.9</value>
+<value>3</value>
+<value>3.1</value>
+<value>2.7</value>
+<value>3.1</value>
+<value>2.3</value>
+<value>2.5</value>
+<value>2.8</value>
+<value>3.4</value>
+<value>4.3</value>
+<value>4.6</value>
+<value>4.3</value>
+<value>4.1</value>
+<value>4</value>
+<value>4</value>
+<value>4.2</value>
+<value>4.1</value>
+<value>4</value>
+<value>3.9</value>
+<value>3.6</value>
+<value>2.4</value>
+<value>3</value>
+<value>3.3</value>
+<value>3.4</value>
+<value>3.5</value>
+<value>3.1</value>
+<value>3.4</value>
+<value>3.3</value>
+<value>3.4</value>
+<value>3.5</value>
+<value>3.5</value>
+<value>3.6</value>
+<value>3.6</value>
+<value>3.7</value>
+<value>3.5</value>
+<value>3.4</value>
+<value>3.3</value>
+<value>3.2</value>
+<value>3.3</value>
+<value>2.8</value>
+<value>3.1</value>
+<value>2.3</value>
+<value>2.9</value>
+<value>2.9</value>
+<value>3.2</value>
+<value>3.2</value>
+<value>3.1</value>
+<value>3</value>
+<value>2.9</value>
+<value>3.1</value>
+<value>3</value>
+<value>3.2</value>
+<value>3.6</value>
+<value>3.4</value>
+<value>3.1</value>
+<value>3.3</value>
+<value>3.2</value>
+<value>3.4</value>
+<value>3</value>
+<value>3.3</value>
+<value>2.6</value>
+<value>3.1</value>
+<value>2.9</value>
+<value>3</value>
+<value>2.9</value>
+<value>2.8</value>
+<value>2.9</value>
+<value>3</value>
+<value>2.9</value>
+<value>2.4</value>
+<value>3</value>
+<value>2.3</value>
+<value>2.5</value>
+<value>2.9</value>
+<value>2.7</value>
+<value>2.4</value>
+<value>2.2</value>
+<value>2.3</value>
+<value>2.1</value>
+<value>3</value>
+<value>3.5</value>
+<value>2.9</value>
+<value>2.4</value>
+<value>2.7</value>
+<value>2.9</value>
+<value>3.2</value>
+<value>3</value>
+<value>2.8</value>
+<value>2.6</value>
+<value>2.4</value>
+<value>2.4</value>
+<value>2.8</value>
+<value>2.3</value>
+<value>2.4</value>
+<value>2.2</value>
+<value>1.4</value>
+<value>1.7</value>
+<value>0.5</value>
+<value>0.8</value>
+<value>0.8</value>
+<value>0.8</value>
+<value>0.8</value>
+</SimpleArrayData>
+<SimpleArrayData name="accuracy_horizontal">
+<value />
+<value>4.9</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.5</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.3</value>
+<value>4</value>
+<value>3.5</value>
+<value>3</value>
+<value>3.6</value>
+<value>3.4</value>
+<value>3</value>
+<value>3</value>
+<value>3.1</value>
+<value>3.6</value>
+<value>4.7</value>
+<value>7.1</value>
+<value>7.6</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.5</value>
+<value>4.6</value>
+<value>3.1</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4</value>
+<value>4.3</value>
+<value>3.4</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>3.9</value>
+<value>4.7</value>
+<value>4.2</value>
+<value>3.7</value>
+<value>4.9</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>3.9</value>
+<value>4.2</value>
+<value>4.8</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>3.6</value>
+<value>3</value>
+<value>3.6</value>
+<value>3</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.3</value>
+<value>4.7</value>
+<value>4.4</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.8</value>
+<value>4.4</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>3.9</value>
+<value>3.8</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.7</value>
+<value>4.9</value>
+<value>4.4</value>
+<value>3.3</value>
+<value>3.1</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>3</value>
+<value>4.1</value>
+<value>4.1</value>
+<value>3.5</value>
+<value>3.5</value>
+</SimpleArrayData>
+</SchemaData>
+</ExtendedData>
+</Track>
+</MultiTrack>
+</Placemark>
+</Document>
+</kml>

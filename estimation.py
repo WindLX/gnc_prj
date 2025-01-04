@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from model import Vector3
+from data_loader import Trajectory
 from kml import KML
 from rinex4 import RINEXNavigationData, RINEXObservationData, SatelliteSystem
 from utils import ecef_to_lla, ecef_to_enu, lla_to_ecef, Omegae_dot, c
@@ -13,20 +14,19 @@ from utils import ecef_to_lla, ecef_to_enu, lla_to_ecef, Omegae_dot, c
 class PositionEstimation:
     def __init__(
         self,
-        obs_file: str,
-        nav_file: str,
-        track_file: str,
+        trajectory: Trajectory,
         enable_init_alignment: bool = True,
-        enable_iono_correction: bool = False, #True,
-        enable_tropo_correction: bool = False, #True,
+        enable_iono_correction: bool = False,
+        enable_tropo_correction: bool = False,
         epsilon: float = 1e-8,
         max_iterations: int = 1000,
         threshold: float = 0,
         step: int = 1,
         log_dir: str = "log",
         figure_dir: str = "figure",
-        result_file: str = "results",
+        result_dir: str = "results",
     ):
+        nav_file, obs_file, track_file = trajectory.unpack()
         self.obs_file = obs_file
         self.nav_file = nav_file
         self.track = KML(track_file)
@@ -41,8 +41,8 @@ class PositionEstimation:
         self.elevation_threshold = threshold
         self.step = step
 
-        self.log_dir = result_file + log_dir
-        self.figure_dir = result_file + figure_dir
+        self.log_dir = result_dir + log_dir
+        self.figure_dir = result_dir + figure_dir
         self.estimate_lla = None
         self.iono_data = None
 
@@ -150,7 +150,7 @@ class PositionEstimation:
             else:
                 dltR[idx] = Iion
         dltR = dltR * c
-        # print(f"Iono: {dltR}, A: {A}, P: {P}, x: {x}, Localtime: {Localtime}")
+        # print(f"Iono: {dltR}, A: {A}, P: {P}, x: {x}, Localtime: {localtime}")
         return dltR
 
     def calculate_tropo_delay(
@@ -414,8 +414,8 @@ if __name__ == "__main__":
     nav_file = "brdc2750.22n"
     obs_file = "bake2750.22o"
     # //track_file = ""
-    
-    estimation = PositionEstimation(truth, obs_file)    
+
+    estimation = PositionEstimation(truth, obs_file)
     observations = estimation.load_observation_data()
     time = observations[0][0]
     observation = observations[0][1]
