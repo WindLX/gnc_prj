@@ -11,6 +11,9 @@ from model import Vector3
 from utils import ecef_to_lla
 from estimation import PositionEstimation
 from map import Map, PathStyle
+from pathlib import Path
+from sklearn.preprocessing import MinMaxScaler
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def evalution(df):
@@ -46,6 +49,8 @@ def evalution(df):
 
     gdop_mean = df["GDOP"].mean()
     print(f"\nMean GDOP: {gdop_mean}")
+    vdop_mean = df["VDOP"].mean()
+    print(f"\nMean GDOP: {vdop_mean}")
     gdop_variance = df["GDOP"].var()
     print(f"Variance of GDOP: {gdop_variance}")
 
@@ -83,6 +88,9 @@ def evalution(df):
         f.write(f"  {gdop_mean}\n")
         f.write("\nVariance of GDOP:\n")
         f.write(f"  {gdop_variance}\n")
+        f.write(f"  {vdop_mean}\n")
+        # f.write("\nVariance of GDOP:\n")
+        # f.write(f"  {vdop_variance}\n")
 
 
 def plot_error(df, result_file, plot_flag=True):
@@ -326,6 +334,7 @@ def plot_tdop_histogram(df, result_file, plot_flag=True):
 
 
 
+
 def plot_coordinates(df, result_file, plot_flag=True):
     plt.figure(figsize=(10, 6))
 
@@ -342,6 +351,103 @@ def plot_coordinates(df, result_file, plot_flag=True):
     plt.savefig(result_file + "coordinates.png", dpi=300, bbox_inches="tight")
     if plot_flag:
         plt.show()
+
+
+def plot_grouped_dop_histogram(df, result_file, plot_flag=True):
+    """
+    Plots a grouped histogram for GDOP, HDOP, VDOP, PDOP, and TDOP.
+    
+    Parameters:
+    - df: pandas DataFrame containing GDOP, HDOP, VDOP, PDOP, and TDOP columns.
+    - result_file: Path to save the resulting histogram.
+    - plot_flag: If True, displays the plot.
+    """
+    # Define bin edges based on the combined range of all DOP values
+    dop_columns = ["GDOP", "HDOP", "VDOP", "PDOP", "TDOP"]
+    all_data = np.concatenate([df[col].dropna().values for col in dop_columns])
+    bins = np.linspace(all_data.min(), all_data.max(), 21)
+
+    # Compute histograms for each DOP type
+    histograms = {col: np.histogram(df[col].dropna(), bins=bins)[0] for col in dop_columns}
+
+    # Bar positions and width
+    bin_centers = bins[:-1] + (bins[1] - bins[0]) / 2
+    width = (bins[1] - bins[0]) * 0.15  # Width for grouped bars
+
+    # Colors for each DOP type
+    colors = {
+        "GDOP": "red",
+        "HDOP": "green",
+        "VDOP": "blue",
+        "PDOP": "orange",
+        "TDOP": "purple"
+    }
+
+    # Create the plot
+    plt.figure(figsize=(12, 8))
+    for i, (dop_type, hist) in enumerate(histograms.items()):
+        plt.bar(bin_centers + i * width - (len(histograms) / 2) * width, 
+                hist, 
+                width=width, 
+                label=dop_type, 
+                color=colors[dop_type], 
+                alpha=0.7)
+
+    # Add labels, legend, and title
+    plt.title("Grouped Histogram of DOP Values")
+    plt.xlabel("DOP Value")
+    plt.ylabel("Frequency")
+    plt.legend()
+    plt.tight_layout()
+
+    # Save the plot
+    plt.savefig(result_file + "grouped_dop_histogram.png", dpi=300, bbox_inches="tight")
+
+    # Show the plot if flag is True
+    if plot_flag:
+        plt.show()
+
+
+# def plot_satellite_distribution_with_dop(satellite_data, result_file, plot_flag=True):
+#     """
+#     Plots a compound graph showing satellite distribution and DOP values.
+
+#     Parameters:
+#     - satellite_data: pandas DataFrame with 'Azimuth' and 'Elevation' columns for satellites.
+#     - dop_values: pandas DataFrame with DOP values (GDOP, HDOP, VDOP, PDOP, TDOP).
+#     - result_file: Path to save the resulting plot.
+#     - plot_flag: If True, displays the plot.
+#     """
+#     # Create the figure with two subplots
+#     fig, axs = plt.subplots(1, 2, figsize=(16, 8), subplot_kw={0: {'projection': 'polar'}})
+
+#     ### Satellite Distribution (Polar Plot)
+#     ax_polar = axs[0]
+#     azimuth = np.radians(satellite_data["Azimuth"])  # Convert azimuth to radians
+#     elevation = satellite_data["Elevation"]  # Elevation remains as-is
+#     ax_polar.scatter(azimuth, elevation, c='blue', alpha=0.7, s=50, label="Satellites")
+#     ax_polar.set_theta_zero_location('N')  # North as 0°
+#     ax_polar.set_theta_direction(-1)  # Clockwise azimuth
+#     ax_polar.set_title("Satellite Distribution")
+#     ax_polar.legend(loc="upper right", fontsize="small")
+#     ax_polar.set_rlabel_position(135)  # Radial labels
+
+#     ### DOP Values (Grouped Histogram)
+#     ax_bar = axs[1]
+#     dop_types = dop_values.columns.tolist()
+#     dop_vals = dop_values.mean().tolist()  # Take mean if multiple DOP records exist
+#     ax_bar.bar(dop_types, dop_vals, color=["red", "green", "blue", "orange", "purple"], alpha=0.7)
+#     ax_bar.set_title("DOP Values")
+#     ax_bar.set_ylabel("DOP Value")
+#     ax_bar.set_xlabel("DOP Type")
+
+#     # Adjust layout and save the plot
+#     plt.tight_layout()
+#     plt.savefig(result_file + "satellite_distribution_with_dop.png", dpi=300, bbox_inches="tight")
+
+#     # Show the plot if flag is True
+#     if plot_flag:
+#         plt.show()
 
 
 def plot_map(df, result_file):
@@ -457,7 +563,7 @@ def draw_satellite_tracks(satellite_position, result_file, plot_flag=True, max_g
 
 if __name__ == "__main__":
     ##for i in range(0,8):
-    file_index = 0
+    file_index = 6
     plot_show_flag = True
 
     nav_files = ["./nav/brdc3490.24n", "./nav/brdc3630.24n"]
@@ -596,6 +702,7 @@ if __name__ == "__main__":
     evalution(df)
     plot_map(df, result_file=result_file)
     plot_error(df, result_file=result_file, plot_flag=plot_show_flag)
+    plot_grouped_dop_histogram(df, result_file, plot_flag=True)
     plot_error_histograms(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_coordinates(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_ecef_coordinates(df, result_file=result_file, plot_flag=plot_show_flag)
@@ -604,12 +711,219 @@ if __name__ == "__main__":
     plot_hdop(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_pdop(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_tdop(df, result_file=result_file, plot_flag=plot_show_flag)
+    
     #histograms
+    
     plot_gdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_vdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_hdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_pdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
     plot_tdop_histogram(df, result_file=result_file, plot_flag=plot_show_flag)
     draw_satellite_tracks(
-        satellite_position, result_file=result_file, plot_flag=plot_show_flag
+         satellite_position, result_file=result_file, plot_flag=plot_show_flag)
+
+
+
+def calculate_gdop(satellite_position):
+    gdop_values = []
+    times = satellite_position["time"].unique()
+    
+    for t in times:
+        sat_data = satellite_position[satellite_position["time"] == t]
+        
+        azimuth = sat_data["azimuth"].values
+        elevation = sat_data["elevation"].values
+        elevation = np.maximum(elevation, 0.01)  
+        
+        G = np.column_stack((
+            np.cos(elevation) * np.cos(azimuth),
+            np.cos(elevation) * np.sin(azimuth),
+            np.sin(elevation),
+            np.ones(len(azimuth))
+        ))
+        
+        try:
+            Q = np.linalg.inv(G.T @ G)  
+            gdop = np.sqrt(np.trace(Q)) 
+        except np.linalg.LinAlgError:
+            gdop = np.nan  
+        
+        gdop_values.append((t, gdop))
+    
+    gdop_df = pd.DataFrame(gdop_values, columns=["time", "gdop"])
+    return gdop_df
+var = calculate_gdop(satellite_position)
+print(var)
+
+def plot_satellite_distribution_vs_gdop(satellite_position, gdop_df):
+
+    merged_data = satellite_position.merge(gdop_df, on="time")
+    
+    plt.figure(figsize=(10, 8))
+    scatter = plt.scatter(
+        merged_data["azimuth"],
+        merged_data["elevation"],
+        c=merged_data["gdop"],
+        cmap="viridis",
+        alpha=0.7
     )
+    plt.colorbar(scatter, label="GDOP")
+    plt.title("Satellite Distribution vs GDOP")
+    plt.xlabel("Azimuth (radians)")
+    plt.ylabel("Elevation (radians)")
+    plt.grid(True)
+    plt.show()
+
+gdop_df = calculate_gdop(satellite_position)
+plot_satellite_distribution_vs_gdop(satellite_position, gdop_df)
+
+
+
+def plot_gdop_with_satellite_distribution_3d(satellite_position, gdop_df):
+   
+    satellite_position["time"] = pd.to_datetime(satellite_position["time"])
+    
+    
+    time_vals = []
+    azimuth_vals = []
+    elevation_vals = []
+    gdop_vals = []
+
+    for t in gdop_df["time"]:
+        sat_data = satellite_position[satellite_position["time"] == t]
+        gdop = gdop_df[gdop_df["time"] == t]["gdop"].values[0]
+        
+        time_vals.extend([t] * len(sat_data))
+        azimuth_vals.extend(sat_data["azimuth"].values)
+        elevation_vals.extend(sat_data["elevation"].values)
+        gdop_vals.extend([gdop] * len(sat_data))
+    
+    time_vals = [(pd.Timestamp(t).timestamp() - pd.Timestamp(time_vals[0]).timestamp()) for t in time_vals]
+
+    azimuth_vals = np.degrees(azimuth_vals) if max(azimuth_vals) <= 2 * np.pi else azimuth_vals
+    elevation_vals = np.degrees(elevation_vals) if max(elevation_vals) <= np.pi else elevation_vals
+
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111, projection='3d')
+
+    scatter = ax.scatter(time_vals, azimuth_vals, elevation_vals, c=gdop_vals, cmap='viridis', s=50)
+
+    ax.set_xlabel('Time (seconds since start)', fontsize=12)
+    ax.set_ylabel('Azimuth (degrees)', fontsize=12)
+    ax.set_zlabel('Elevation (degrees)', fontsize=12)
+    ax.set_title('GDOP with Satellite Distribution (Time, Azimuth, Elevation)', fontsize=14)
+
+    cbar = fig.colorbar(scatter, ax=ax, shrink=0.5, aspect=10)
+    cbar.set_label('GDOP', fontsize=12)
+
+    ax.set_xlim(min(time_vals), max(time_vals)) 
+    ax.set_ylim(0, 360)  
+    ax.set_zlim(0, 90)  
+    plt.tight_layout()
+    plt.show()
+
+plot_gdop_with_satellite_distribution_3d(satellite_position, gdop_df)
+
+
+def calculate_dops(satellite_position):
+  
+    dop_values = []
+    times = satellite_position["time"].unique()
+    
+    for t in times:
+        sat_data = satellite_position[satellite_position["time"] == t]
+        
+        azimuth = sat_data["azimuth"].values
+        elevation = sat_data["elevation"].values
+        elevation = np.maximum(elevation, 0.01)  
+        
+        G = np.column_stack((
+            np.cos(elevation) * np.cos(azimuth),
+            np.cos(elevation) * np.sin(azimuth),
+            np.sin(elevation),
+            np.ones(len(azimuth))
+        ))
+        
+        try:
+            Q = np.linalg.inv(G.T @ G) 
+            gdop = np.sqrt(np.trace(Q))               
+            hdop = np.sqrt(Q[0, 0] + Q[1, 1])         
+            vdop = np.sqrt(Q[2, 2])                   
+            tdop = np.sqrt(Q[3, 3])                   
+            pdop = np.sqrt(Q[0, 0] + Q[1, 1] + Q[2, 2])  
+        except np.linalg.LinAlgError:
+            gdop, hdop, vdop, tdop, pdop = np.nan, np.nan, np.nan, np.nan, np.nan
+        
+        dop_values.append((t, gdop, hdop, vdop, tdop, pdop))
+    
+    dop_df = pd.DataFrame(dop_values, columns=["time", "gdop", "hdop", "vdop", "tdop", "pdop"])
+    return dop_df
+
+satellite_position = pd.DataFrame({
+    "time": pd.date_range(start="2025-01-05 12:00:00", periods=10, freq="S").repeat(5),
+    "azimuth": np.random.uniform(0, 2 * np.pi, 50),
+    "elevation": np.random.uniform(0, np.pi / 2, 50)
+})
+
+dop_df = calculate_dops(satellite_position)
+print(dop_df)
+
+
+def plot_dops_with_satellite_distribution_3d(satellite_position, dop_df):
+   
+    satellite_position["time"] = pd.to_datetime(satellite_position["time"])
+    dop_df["time"] = pd.to_datetime(dop_df["time"])
+
+    time_vals = []
+    azimuth_vals = []
+    elevation_vals = []
+    gdop_vals, hdop_vals, vdop_vals, tdop_vals, pdop_vals = [], [], [], [], []
+
+    for t in dop_df["time"]:
+        sat_data = satellite_position[satellite_position["time"] == t]
+        gdop = dop_df[dop_df["time"] == t]["gdop"].values[0]
+        hdop = dop_df[dop_df["time"] == t]["hdop"].values[0]
+        vdop = dop_df[dop_df["time"] == t]["vdop"].values[0]
+        tdop = dop_df[dop_df["time"] == t]["tdop"].values[0]
+        pdop = dop_df[dop_df["time"] == t]["pdop"].values[0]
+
+        time_vals.extend([t] * len(sat_data))
+        azimuth_vals.extend(sat_data["azimuth"].values)
+        elevation_vals.extend(sat_data["elevation"].values)
+        gdop_vals.extend([gdop] * len(sat_data))
+        hdop_vals.extend([hdop] * len(sat_data))
+        vdop_vals.extend([vdop] * len(sat_data))
+        tdop_vals.extend([tdop] * len(sat_data))
+        pdop_vals.extend([pdop] * len(sat_data))
+
+    time_start = pd.Timestamp(dop_df["time"].iloc[0]).timestamp()
+    time_vals = [(pd.Timestamp(t).timestamp() - pd.Timestamp(time_vals[0]).timestamp())*100 for t in time_vals]
+
+    azimuth_vals = np.degrees(azimuth_vals) if max(azimuth_vals) <= 2 * np.pi else azimuth_vals
+    elevation_vals = np.degrees(elevation_vals) if max(elevation_vals) <= np.pi else elevation_vals
+
+    fig = plt.figure(figsize=(20, 16))
+    dop_types = [("GDOP", gdop_vals), ("HDOP", hdop_vals), ("VDOP", vdop_vals), ("TDOP", tdop_vals), ("PDOP", pdop_vals)]
+
+    for i, (dop_name, dop_vals) in enumerate(dop_types, start=1):
+        ax = fig.add_subplot(3, 2, i, projection='3d')
+
+        scatter = ax.scatter(time_vals, azimuth_vals, elevation_vals, c=dop_vals, cmap='viridis', s=50)
+
+        ax.set_xlabel('Time (seconds since start)', fontsize=10)
+        ax.set_ylabel('Azimuth (degrees)', fontsize=10)
+        ax.set_zlabel('Elevation (degrees)', fontsize=10)
+        ax.set_title(f'{dop_name} with Satellite Distribution', fontsize=12)
+
+        cbar = fig.colorbar(scatter, ax=ax, shrink=0.6, aspect=10)
+        cbar.set_label(f'{dop_name}', fontsize=10)
+
+        ax.set_xlim(min(time_vals), max(time_vals))  
+        ax.set_ylim(0, 360)  
+        ax.set_zlim(0, 90)  
+
+    plt.tight_layout()
+    plt.show()
+
+dop_df = calculate_dops(satellite_position)
+plot_dops_with_satellite_distribution_3d(satellite_position, dop_df)
