@@ -3,6 +3,9 @@ from datetime import datetime
 
 import numpy as np
 import matplotlib.pyplot as plt
+import math
+from scipy.stats import chi2 as chi2_FD # for fault detection
+from scipy.stats import norm as norm_FD #for fault detection
 
 from model import Vector3
 from data_loader import Trajectory
@@ -16,12 +19,16 @@ class PositionEstimation:
         self,
         trajectory: Trajectory,
         enable_init_alignment: bool = True,
-        enable_iono_correction: bool = False,
-        enable_tropo_correction: bool = False,
+        enable_iono_correction: bool = True, #False, 
+        enable_tropo_correction: bool = True, #False,
+        enable_fault_detction: bool = True,
         epsilon: float = 1e-8,
         max_iterations: int = 1000,
         threshold: float = 0,
         step: int = 1,
+        PFA: float = 0.01, 
+        PMD: float = 0.00001, 
+        sigma0: float = 40, # fileindex = 4 dormitory
         log_dir: str = "log",
         figure_dir: str = "figure",
         result_dir: str = "results",
@@ -35,11 +42,16 @@ class PositionEstimation:
         self.enable_init_alignment = enable_init_alignment
         self.enable_iono_correction = enable_iono_correction
         self.enable_tropo_correction = enable_tropo_correction
+        self.enalbe_fault_detection = enable_fault_detction
+
 
         self.estimate_epsilon = epsilon
         self.max_iterations = max_iterations
         self.elevation_threshold = threshold
         self.step = step
+        self.PFA = PFA
+        self.PMD = PMD
+        self.sigma0 = sigma0
 
         self.log_dir = result_dir + log_dir
         self.figure_dir = result_dir + figure_dir
@@ -178,12 +190,13 @@ class PositionEstimation:
         if length < 4:
             raise ValueError("Insufficient Visible Satellite Counts")
         else:
-            data = np.zeros((length, 5))
+            data = np.zeros((length, 6))
             for idx, d in enumerate(estimation_data):
                 data[idx] = [
                     *d["ecef"].list(),
                     d["delta_t"],
                     getattr(d["obs_data"], data_to_use),
+                    d["prn"]
                 ]
             G = np.zeros((length, 4))
             x = np.zeros(4)
@@ -232,6 +245,59 @@ class PositionEstimation:
                 raise RuntimeError(
                     "Maximum number of iterations reached without convergence"
                 )
+
+            # Fault detection and exclusion
+            if(self.enalbe_fault_detection & iteration<self.max_iterations):
+                if(length<5):
+                    print("Visible satellites number are less than 5")
+                else:
+                    T_sigma = self.sigma0*np.sqrt(chi2_FD.ppf(1-self.PFA,length-4))  # Threshold for fault detection
+                    T_d     = norm_FD.ppf(1-self.PFA/2/length) # Threshold for fault recognition
+                    # Fault detection
+                    b_hat = delta_rho - G @ delta_x
+                    A_matrix = np.linalg.inv(G.T @ G) @ G.T
+                    S_matrix = np.eye(length)- G @ A_matrix
+                    SSE   = np.linalg.norm(b_hat)**2
+                    T1    = math.sqrt(SSE/(length-4))  # sigma value for fualt detection
+                    T2    = np.abs(b_hat) / (self.sigma0* np.sqrt(np.diag(S_matrix)))
+                    if(T1>T_sigma):
+                        print("Detect fault")
+                        # Fault recognition and exclusion
+                        max_PRN = np.argmax(T2)
+                        max_T2  = np.max(T2)
+                        if(max_T2>T_d):
+                            print("Excluded satellite is %d" % data[max_PRN,5]," T2 is %f" %max_T2)
+                            data_new = np.delete(data, max_PRN, axis=0)
+                            r_new    = np.delete(r, max_PRN, axis=0)
+                            length = length-1                            
+                            G = np.zeros((length, 4))
+                            x = np.zeros(4)
+                            delta_x = np.ones(4)
+                            delta_rho = np.zeros(length)
+                            
+                            iteration = 0
+                            while (
+                                np.linalg.norm(delta_x) > self.estimate_epsilon
+                                and iteration < self.max_iterations
+                            ):
+                                for i in range(length):
+                                    d = np.linalg.norm(data_new[i, :3] - x[:3])
+                                    G[i, :] = [
+                                        (x[0] - data_new[i, 0]) / d,
+                                        (x[1] - data_new[i, 1]) / d,
+                                        (x[2] - data_new[i, 2]) / d,
+                                        1,
+                                    ]
+                                    delta_rho[i] = r_new[i] - d - x[3]
+                                delta_x = np.linalg.inv(G.T @ G) @ G.T @ delta_rho
+                                x += delta_x
+                                iteration += 1
+                            if iteration == self.max_iterations:
+                                raise RuntimeError(
+                                    "At fault exclusion stage, maximum number of iterations reached without convergence"
+                                )
+
+
 
             truth_ecef = lla_to_ecef(truth_lla)
 

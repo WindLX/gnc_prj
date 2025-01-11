@@ -12,13 +12,17 @@ from evaluation import *
 
 
 if __name__ == "__main__":
-    file_index = 8
+    file_index = 4
     plot_show_flag = False
+    RAIM_flag      = True # Remember to set "enable_fault_detction = True" in estimation.py
 
     data_loader = DataLoader("./data")
     trajectory = data_loader[file_index]
 
-    result_dir = "./results/" + str(file_index) + "/"
+    if RAIM_flag:
+        result_dir = "./results_RAIM/" + str(file_index) + "/"
+    else:
+        result_dir = "./results/" + str(file_index) + "/"
 
     estimation = PositionEstimation(
         trajectory, step=5, threshold=8, result_dir=result_dir
