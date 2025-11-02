@@ -1,480 +1,292 @@
-from enum import Enum
-from pathlib import Path
+"""
+Evaluation module for GNSS trajectory analysis.
+Computes metrics and generates all required plots (errors, coordinates, DOPs, satellites, map).
+"""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-from model import Vector3
-from map import Map, PathStyle
-
-
-def evalution(df: pd.DataFrame, result_dir: str) -> None:
-    mean_position = df[["ecef_x", "ecef_y", "ecef_z"]].mean()
-    variance_position = df[["ecef_x", "ecef_y", "ecef_z"]].var()
-
-    mean_errors = df[
-        [
-            "norm_error",
-            "horizontal_error_lat",
-            "horizontal_error_lon",
-            "vertical_error",
-        ]
-    ].mean()
-    variance_errors = df[
-        [
-            "norm_error",
-            "horizontal_error_lat",
-            "horizontal_error_lon",
-            "vertical_error",
-        ]
-    ].var()
-
-    print("Mean Estimated Position (ECEF):")
-    print(mean_position)
-    print("\nVariance of Estimated Position (ECEF):")
-    print(variance_position)
-
-    print("\nMean Errors:")
-    print(mean_errors)
-    print("\nVariance of Errors:")
-    print(variance_errors)
-
-    gdop_mean = df["GDOP"].mean()
-    print(f"\nMean GDOP: {gdop_mean}")
-    gdop_variance = df["GDOP"].var()
-    print(f"Variance of GDOP: {gdop_variance}")
-
-    log_path = Path(result_dir) / "summary_results.txt"
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-
-    with log_path.open("w") as f:
-        f.write("Mean Estimated Position (ECEF):\n")
-        f.write(f"  X: {mean_position['ecef_x']} meters\n")
-        f.write(f"  Y: {mean_position['ecef_y']} meters\n")
-        f.write(f"  Z: {mean_position['ecef_z']} meters\n")
-        f.write("\nVariance of Estimated Position (ECEF):\n")
-        f.write(f"  X: {variance_position['ecef_x']} meters^2\n")
-        f.write(f"  Y: {variance_position['ecef_y']} meters^2\n")
-        f.write(f"  Z: {variance_position['ecef_z']} meters^2\n")
-        f.write("\nMean Errors:\n")
-        f.write(f"  Norm Error: {mean_errors['norm_error']} meters\n")
-        f.write(
-            f"  Horizontal Error Latitude: {mean_errors['horizontal_error_lat']} meters\n"
-        )
-        f.write(
-            f"  Horizontal Error Longitude: {mean_errors['horizontal_error_lon']} meters\n"
-        )
-        f.write(f"  Vertical Error: {mean_errors['vertical_error']} meters\n")
-        f.write("\nVariance of Errors:\n")
-        f.write(f"  Norm Error: {variance_errors['norm_error']} meters^2\n")
-        f.write(
-            f"  Horizontal Error Latitude: {variance_errors['horizontal_error_lat']} meters^2\n"
-        )
-        f.write(
-            f"  Horizontal Error Longitude: {variance_errors['horizontal_error_lon']} meters^2\n"
-        )
-        f.write(f"  Vertical Error: {variance_errors['vertical_error']} meters^2\n")
-        f.write("\nMean GDOP:\n")
-        f.write(f"  {gdop_mean}\n")
-        f.write("\nVariance of GDOP:\n")
-        f.write(f"  {gdop_variance}\n")
-
-
-def plot_error(df: pd.DataFrame, result_dir: str, plot_flag: bool = True) -> None:
-    plt.figure(figsize=(10, 6))
-
-    sns.lineplot(
-        data=df,
-        x="time",
-        y="norm_error",
-        label="Norm Error",
-    )
-
-    sns.lineplot(
-        data=df,
-        x="time",
-        y="horizontal_error_lat",
-        label="Horizontal Error Latitude",
-    )
-
-    sns.lineplot(
-        data=df,
-        x="time",
-        y="horizontal_error_lon",
-        label="Horizontal Error Longitude",
-    )
-
-    sns.lineplot(data=df, x="time", y="vertical_error", label="Vertical Error")
-
-    plt.title("Position Estimation Errors Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("Error (meters)")
-
-    plt.xticks(rotation=45)
-
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(result_dir + "error.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_error_histograms(
-    df: pd.DataFrame, result_dir: str, plot_flag: bool = True
-) -> None:
-    plt.figure(figsize=(14, 10))
-
-    plt.subplot(2, 2, 1)
-    sns.histplot(df["norm_error"], kde=True)
-    plt.title("Norm Error Distribution")
-    plt.xlabel("Norm Error (meters)")
-
-    plt.subplot(2, 2, 2)
-    sns.histplot(df["horizontal_error_lat"], kde=True)
-    plt.title("Horizontal Error Latitude Distribution")
-    plt.xlabel("Horizontal Error Latitude (meters)")
-
-    plt.subplot(2, 2, 3)
-    sns.histplot(df["horizontal_error_lon"], kde=True)
-    plt.title("Horizontal Error Longitude Distribution")
-    plt.xlabel("Horizontal Error Longitude (meters)")
-
-    plt.subplot(2, 2, 4)
-    sns.histplot(df["vertical_error"], kde=True)
-    plt.title("Vertical Error Distribution")
-    plt.xlabel("Vertical Error (meters)")
-
-    plt.tight_layout()
-    plt.savefig(result_dir + "error_histograms.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_gdop(df: pd.DataFrame, result_dir: str, plot_flag: bool = True) -> None:
-    plt.figure(figsize=(10, 6))
-
-    sns.lineplot(data=df, x="time", y="GDOP", label="GDOP")
-
-    plt.title("GDOP Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("GDOP")
-
-    plt.xticks(rotation=45)
-
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(result_dir + "gdop.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_gdop_histogram(
-    df: pd.DataFrame, result_dir: str, plot_flag: bool = True
-) -> None:
-    plt.figure(figsize=(10, 6))
-
-    sns.histplot(df["GDOP"], kde=True)
-    plt.title("GDOP Distribution")
-    plt.xlabel("GDOP")
-    plt.ylabel("Frequency")
-
-    plt.tight_layout()
-
-    plt.savefig(result_dir + "gdop_histogram.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_vdop(df: pd.DataFrame, result_dir: str, plot_flag: bool = True) -> None:
-    plt.figure(figsize=(10, 6))
-
-    sns.lineplot(data=df, x="time", y="VDOP", label="VDOP")
-
-    plt.title("Vertical Dilution of Precision (VDOP) Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("VDOP Value")
-
-    plt.xticks(rotation=45)
-
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(result_dir + "vdop.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_vdop_histogram(
-    df: pd.DataFrame, result_dir: str, plot_flag: bool = True
-) -> None:
-    plt.figure(figsize=(10, 6))
-    sns.histplot(df["VDOP"], kde=True, bins=20, color="blue", label="VDOP")
-    plt.title("VDOP Histogram")
-    plt.xlabel("VDOP Value")
-    plt.ylabel("Frequency")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(result_dir + "vdop_histogram.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_hdop(df: pd.DataFrame, result_dir: str, plot_flag: bool = True) -> None:
-    plt.figure(figsize=(10, 6))
-
-    sns.lineplot(data=df, x="time", y="HDOP", label="HDOP")
-
-    plt.title("Horizontal Dilution of Precision (HDOP) Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("HDOP Value")
-
-    plt.xticks(rotation=45)
-
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(result_dir + "hdop.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_hdop_histogram(
-    df: pd.DataFrame, result_dir: str, plot_flag: bool = True
-) -> None:
-    plt.figure(figsize=(10, 6))
-    sns.histplot(df["HDOP"], kde=True, bins=20, color="green", label="HDOP")
-    plt.title("HDOP Histogram")
-    plt.xlabel("HDOP Value")
-    plt.ylabel("Frequency")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(result_dir + "hdop_histogram.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_pdop(df: pd.DataFrame, result_dir: str, plot_flag: bool = True) -> None:
-    plt.figure(figsize=(10, 6))
-
-    sns.lineplot(data=df, x="time", y="PDOP", label="PDOP")
-
-    plt.title("Position Dilution of Precision (PDOP) Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("PDOP Value")
-
-    plt.xticks(rotation=45)
-
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(result_dir + "pdop.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_pdop_histogram(
-    df: pd.DataFrame, result_dir: str, plot_flag: bool = True
-) -> None:
-    plt.figure(figsize=(10, 6))
-    sns.histplot(df["PDOP"], kde=True, bins=20, color="red", label="PDOP")
-    plt.title("PDOP Histogram")
-    plt.xlabel("PDOP Value")
-    plt.ylabel("Frequency")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(result_dir + "pdop_histogram.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_tdop(df: pd.DataFrame, result_dir: str, plot_flag: bool = True) -> None:
-    plt.figure(figsize=(10, 6))
-
-    sns.lineplot(data=df, x="time", y="TDOP", label="TDOP")
-
-    plt.title("Time Dilution of Precision (TDOP) Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("TDOP Value")
-
-    plt.xticks(rotation=45)
-
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(result_dir + "tdop.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_tdop_histogram(
-    df: pd.DataFrame, result_dir: str, plot_flag: bool = True
-) -> None:
-    plt.figure(figsize=(10, 6))
-    sns.histplot(df["TDOP"], kde=True, bins=20, color="purple", label="TDOP")
-    plt.title("TDOP Histogram")
-    plt.xlabel("TDOP Value")
-    plt.ylabel("Frequency")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(result_dir + "tdop_histogram.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
-
-def plot_coordinates(df: pd.DataFrame, result_dir: str, plot_flag: bool = True) -> None:
-    plt.figure(figsize=(10, 6))
-
-    plt.plot(df["lon"], df["lat"], label="Estimated Coordinates", color="blue")
-    plt.plot(df["truth_lon"], df["truth_lat"], label="True Coordinates", color="red")
-
-    plt.title("True vs Estimated Coordinates")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
-
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(result_dir + "coordinates.png", dpi=300, bbox_inches="tight")
-    if plot_flag:
-        plt.show()
-
+from typing import Optional, Union
+from pathlib import Path
+from enum import Enum
+import io
+import logging
+
+# Import Map for plotting
+from map import Map
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class MapPlotMode(Enum):
-    SPLIT = "split"
-    COMBINE = "combine"
+    """Enum for plot modes: true trajectory, estimated, or both."""
+    TRUE = "true"
+    EST = "est"
     BOTH = "both"
 
+def _ensure_path(result_dir: Union[str, Path]) -> Path:
+    """Helper: Ensure result_dir is a Path object."""
+    return Path(result_dir) if isinstance(result_dir, str) else result_dir
 
-def plot_map(
-    df: pd.DataFrame, result_dir: str, plot_mode: MapPlotMode = MapPlotMode.SPLIT
-) -> None:
-    map = Map()
+def evaluation(df: pd.DataFrame, result_dir: Union[str, Path]):
+    """
+    Main evaluation runner: Computes and prints key metrics.
+    """
+    result_dir = _ensure_path(result_dir)
+    result_dir.mkdir(exist_ok=True, parents=True)
+    
+    if df.empty:
+        logger.warning("Empty DataFrame; skipping evaluation.")
+        return
+    
+    # Basic metrics
+    norm_error = df['norm_error'].mean() if 'norm_error' in df else 0
+    horizontal_error = np.sqrt(df['horizontal_error_lat']**2 + df['horizontal_error_lon']**2).mean() if 'horizontal_error_lat' in df else 0
+    vertical_error = df['vertical_error'].mean() if 'vertical_error' in df else 0
+    
+    print(f"Average Norm Error: {norm_error:.2f}m")
+    print(f"Average Horizontal Error: {horizontal_error:.2f}m")
+    print(f"Average Vertical Error: {vertical_error:.2f}m")
+    
+    # Save summary CSV
+    summary_path = result_dir / "evaluation_summary.csv"
+    summary_df = pd.DataFrame({
+        'metric': ['norm_error_mean', 'horizontal_error_mean', 'vertical_error_mean'],
+        'value': [norm_error, horizontal_error, vertical_error]
+    })
+    summary_df.to_csv(summary_path, index=False)
+    print(f"Summary saved to {summary_path}")
 
-    estimated_locations = [
-        Vector3(row["lon"], row["lat"], 0) for _, row in df.iterrows()
-    ]
-    true_locations = [
-        Vector3(row["truth_lon"], row["truth_lat"], 0) for _, row in df.iterrows()
-    ]
-
-    path_styles = [
-        PathStyle(
-            weight=2,
-            color="0x0000FF",
-            transparency=1,
-            fillcolor="",
-            fillTransparency=0.5,
-        ),
-        PathStyle(
-            weight=2,
-            color="0xFF0000",
-            transparency=1,
-            fillcolor="",
-            fillTransparency=0.5,
-        ),
-    ]
-
-    estimated_uri = map.construct_paths_uri([(estimated_locations, path_styles[0])])
-    true_uri = map.construct_paths_uri([(true_locations, path_styles[1])])
-    combined_uri = map.construct_paths_uri(
-        [
-            (estimated_locations, path_styles[0]),
-            (true_locations, path_styles[1]),
-        ]
-    )
-
-    if plot_mode in {MapPlotMode.COMBINE, MapPlotMode.BOTH}:
-        combined_map_image = map.get_map_image(combined_uri)
-        with open(result_dir + "combined_map.png", "wb") as f:
-            f.write(combined_map_image)
-
-    if plot_mode in {MapPlotMode.SPLIT, MapPlotMode.BOTH}:
-        estimated_map_image = map.get_map_image(estimated_uri)
-        true_map_image = map.get_map_image(true_uri)
-        with open(result_dir + "estimated_map.png", "wb") as f:
-            f.write(estimated_map_image)
-        with open(result_dir + "true_map.png", "wb") as f:
-            f.write(true_map_image)
-
-
-def plot_ecef_coordinates(
-    df: pd.DataFrame, result_dir: str, plot_flag: bool = True
-) -> None:
-    plt.figure(figsize=(14, 8))
-
-    plt.subplot(3, 1, 1)
-    sns.lineplot(data=df, x="time", y="ecef_x", label="ECEF X")
-    plt.title("ECEF X Coordinate Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("ECEF X (meters)")
-
-    plt.subplot(3, 1, 2)
-    sns.lineplot(data=df, x="time", y="ecef_y", label="ECEF Y")
-    plt.title("ECEF Y Coordinate Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("ECEF Y (meters)")
-
-    plt.subplot(3, 1, 3)
-    sns.lineplot(data=df, x="time", y="ecef_z", label="ECEF Z")
-    plt.title("ECEF Z Coordinate Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("ECEF Z (meters)")
-
+def plot_error(df: pd.DataFrame, result_dir: Union[str, Path], plot_flag: bool = False):
+    """Plot norm, horizontal, and vertical errors over time."""
+    result_dir = _ensure_path(result_dir)
+    if df.empty:
+        return
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(df['time'], df['norm_error'], label='Norm Error', alpha=0.7)
+    ax.plot(df['time'], np.sqrt(df['horizontal_error_lat']**2 + df['horizontal_error_lon']**2), label='Horizontal Error', alpha=0.7)
+    ax.plot(df['time'], df['vertical_error'], label='Vertical Error', alpha=0.7)
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Error (m)')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    plt.title('Position Errors Over Time')
+    plt.xticks(rotation=45)
     plt.tight_layout()
-
-    plt.savefig(result_dir + "ecef_coordinates.png", dpi=300, bbox_inches="tight")
+    save_path = result_dir / "position_errors.png"
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
     if plot_flag:
         plt.show()
+    plt.close()
+    print(f"Error plot saved to {save_path}")
 
-
-def draw_satellite_tracks(
-    satellite_position: pd.DataFrame,
-    result_dir: str,
-    plot_flag: bool = True,
-    max_gap: int = 90,
-) -> None:
-    fig = plt.figure(figsize=(12, 12))
-    ax = fig.add_subplot(111, projection="polar")
-    colors = plt.colormaps["tab20"]
-
-    for idx, prn in enumerate(satellite_position["prn"].unique()):
-        sat_data = satellite_position[satellite_position["prn"] == prn]
-
-        sat_data.loc[:, "azimuth"] = np.mod(sat_data["azimuth"], 2 * np.pi)
-        sat_data.loc[:, "elevation"] = np.mod(sat_data["elevation"], 2 * np.pi)
-        azimuth_diff = np.diff(sat_data["azimuth"])
-        elevation_diff = np.diff(sat_data["elevation"])
-        large_changes = (np.abs(azimuth_diff) > np.radians(max_gap)) | (
-            np.abs(elevation_diff) > np.radians(max_gap)
-        )
-        segments = np.split(sat_data, np.where(large_changes)[0] + 1)
-
-        for segment in segments:
-            ax.plot(
-                segment["azimuth"],
-                90 - np.degrees(segment["elevation"]),
-                color=colors(idx),
-                label=f"PRN {prn}" if segment.index[0] == sat_data.index[0] else "",
-            )
-
-    handles, labels = ax.get_legend_handles_labels()
-    by_label = dict(zip(labels, handles))
-    ax.legend(by_label.values(), by_label.keys())
-
-    ax.set_theta_zero_location("N")
-    ax.set_theta_direction(-1)
-    ax.set_rlabel_position(90)
-    ax.set_rticks([10, 20, 30, 40, 50, 60, 70, 80, 90])
-    ax.grid(True)
-
-    plt.title("Satellite Tracks on Skyplot", pad=40)
+def plot_error_histograms(df: pd.DataFrame, result_dir: Union[str, Path], plot_flag: bool = False):
+    """Histogram of error distributions."""
+    result_dir = _ensure_path(result_dir)
+    if df.empty:
+        return
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    errors = ['norm_error', 'horizontal_error_lat', 'horizontal_error_lon']
+    for i, err in enumerate(errors):
+        if err in df:
+            sns.histplot(df[err], kde=True, ax=axes[i])
+            axes[i].set_title(f'{err.replace("_", " ").title()} Histogram')
     plt.tight_layout()
-
-    plt.savefig(result_dir + "satellite_tracks.png", dpi=300, bbox_inches="tight")
-
+    save_path = result_dir / "error_histograms.png"
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
     if plot_flag:
         plt.show()
+    plt.close()
+    print(f"Error histograms saved to {save_path}")
+
+def plot_coordinates(df: pd.DataFrame, result_dir: Union[str, Path], plot_flag: bool = False):
+    """Plot LLA coordinates (true vs est)."""
+    result_dir = _ensure_path(result_dir)
+    if df.empty or 'lat' not in df:
+        logger.warning("Missing lat; skipping coordinates plot.")
+        return
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    ax1.plot(df['time'], df['lat'], label='Est Lat', alpha=0.7)
+    ax1.plot(df['time'], df['truth_lat'], label='True Lat', alpha=0.7)
+    ax1.set_ylabel('Latitude')
+    ax1.legend()
+    ax2.plot(df['time'], df['lon'], label='Est Lon', alpha=0.7)
+    ax2.plot(df['time'], df['truth_lon'], label='True Lon', alpha=0.7)
+    ax2.set_ylabel('Longitude')
+    ax2.legend()
+    plt.suptitle('LLA Coordinates Over Time')
+    plt.tight_layout()
+    save_path = result_dir / "lla_coordinates.png"
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
+    if plot_flag:
+        plt.show()
+    plt.close()
+    print(f"Coordinates plot saved to {save_path}")
+
+def plot_ecef_coordinates(df: pd.DataFrame, result_dir: Union[str, Path], plot_flag: bool = False):
+    """Plot ECEF coordinates over time."""
+    result_dir = _ensure_path(result_dir)
+    if df.empty:
+        return
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    ecef_cols = ['ecef_x', 'ecef_y', 'ecef_z']
+    for i, col in enumerate(ecef_cols):
+        if col in df:
+            axes[i].plot(df['time'], df[col], alpha=0.7)
+            axes[i].set_ylabel(col.upper())
+            axes[i].grid(True, alpha=0.3)
+    plt.suptitle('ECEF Coordinates Over Time')
+    plt.tight_layout()
+    save_path = result_dir / "ecef_coordinates.png"
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
+    if plot_flag:
+        plt.show()
+    plt.close()
+    print(f"ECEF plot saved to {save_path}")
+
+# DOP Plots (generic helpers)
+def _plot_dop(df: pd.DataFrame, dop_col: str, title: str, result_dir: Union[str, Path], plot_flag: bool = False):
+    """Generic DOP line plot."""
+    result_dir = _ensure_path(result_dir)
+    if dop_col not in df:
+        logger.warning(f"Missing {dop_col}; skipping.")
+        return
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(df['time'], df[dop_col], alpha=0.7)
+    ax.set_ylabel('DOP Value')
+    ax.set_title(title)
+    ax.grid(True, alpha=0.3)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    save_path = result_dir / f"{dop_col}.png"
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
+    if plot_flag:
+        plt.show()
+    plt.close()
+    print(f"{title} plot saved to {save_path}")
+
+plot_gdop = lambda df, result_dir, plot_flag=False: _plot_dop(df, 'GDOP', 'GDOP Over Time', result_dir, plot_flag)
+plot_vdop = lambda df, result_dir, plot_flag=False: _plot_dop(df, 'VDOP', 'VDOP Over Time', result_dir, plot_flag)
+plot_hdop = lambda df, result_dir, plot_flag=False: _plot_dop(df, 'HDOP', 'HDOP Over Time', result_dir, plot_flag)
+plot_pdop = lambda df, result_dir, plot_flag=False: _plot_dop(df, 'PDOP', 'PDOP Over Time', result_dir, plot_flag)
+plot_tdop = lambda df, result_dir, plot_flag=False: _plot_dop(df, 'TDOP', 'TDOP Over Time', result_dir, plot_flag)
+
+# DOP Histograms
+def _plot_dop_histogram(df: pd.DataFrame, dop_col: str, title: str, result_dir: Union[str, Path], plot_flag: bool = False):
+    """Generic DOP histogram."""
+    result_dir = _ensure_path(result_dir)
+    if dop_col not in df:
+        return
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.histplot(df[dop_col], kde=True, ax=ax)
+    ax.set_title(f'{title} Histogram')
+    plt.tight_layout()
+    save_path = result_dir / f"{dop_col}_histogram.png"
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
+    if plot_flag:
+        plt.show()
+    plt.close()
+    print(f"{title} histogram saved to {save_path}")
+
+plot_gdop_histogram = lambda df, result_dir, plot_flag=False: _plot_dop_histogram(df, 'GDOP', 'GDOP', result_dir, plot_flag)
+plot_vdop_histogram = lambda df, result_dir, plot_flag=False: _plot_dop_histogram(df, 'VDOP', 'VDOP', result_dir, plot_flag)
+plot_hdop_histogram = lambda df, result_dir, plot_flag=False: _plot_dop_histogram(df, 'HDOP', 'HDOP', result_dir, plot_flag)
+plot_pdop_histogram = lambda df, result_dir, plot_flag=False: _plot_dop_histogram(df, 'PDOP', 'PDOP', result_dir, plot_flag)
+plot_tdop_histogram = lambda df, result_dir, plot_flag=False: _plot_dop_histogram(df, 'TDOP', 'TDOP', result_dir, plot_flag)
+
+def draw_satellite_tracks(satellite_position: pd.DataFrame, result_dir: Union[str, Path], plot_flag: bool = False):
+    """Plot satellite azimuth/elevation tracks."""
+    result_dir = _ensure_path(result_dir)
+    if satellite_position is None or satellite_position.empty:
+        logger.warning("No satellite data; skipping tracks plot.")
+        return
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    sns.scatterplot(data=satellite_position, x='azimuth', y='elevation', hue='prn', ax=ax1)
+    ax1.set_title('Satellite Positions (Az/El)')
+    ax1.set_xlabel('Azimuth')
+    ax1.set_ylabel('Elevation')
+    
+    # Tracks by PRN
+    for prn in satellite_position['prn'].unique():
+        prn_data = satellite_position[satellite_position['prn'] == prn].sort_values('time')
+        ax2.plot(prn_data['azimuth'], prn_data['elevation'], label=f'PRN {prn}', alpha=0.7)
+    ax2.set_title('Satellite Tracks')
+    ax2.set_xlabel('Azimuth')
+    ax2.set_ylabel('Elevation')
+    ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.tight_layout()
+    save_path = result_dir / "satellite_tracks.png"
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
+    if plot_flag:
+        plt.show()
+    plt.close()
+    print(f"Satellite tracks saved to {save_path}")
+
+def plot_map(df: pd.DataFrame, result_dir: Union[str, Path], plot_mode: Union[MapPlotMode, str] = MapPlotMode.BOTH,
+             map_provider: str = "osm", map_style: str = "terrain") -> None:
+    """Plot GNSS trajectories on map with fallback."""
+    result_dir = _ensure_path(result_dir)
+    if isinstance(plot_mode, str):
+        try:
+            plot_mode = MapPlotMode(plot_mode.upper())
+        except ValueError:
+            plot_mode = MapPlotMode.BOTH
+    
+    if df.empty:
+        logger.warning("Empty df; skipping map plot.")
+        return
+    
+    # Bounds
+    lats = pd.concat([df['truth_lat'], df['lat']])
+    lons = pd.concat([df['truth_lon'], df['lon']])
+    min_lat, max_lat = lats.min(), lats.max()
+    min_lon, max_lon = lons.min(), lons.max()
+    padding = 0.01
+    min_lat, max_lat = min_lat - padding, max_lat + padding
+    min_lon, max_lon = min_lon - padding, max_lon + padding
+    
+    map_fetcher = Map(provider=map_provider, style=map_style)
+    zoom = 13
+    center_lat, center_lon = (min_lat + max_lat) / 2, (min_lon + max_lon) / 2
+    tile_x, tile_y = map_fetcher._latlon_to_tile(center_lat, center_lon, zoom)
+    true_uri = map_fetcher.get_tile_uri(zoom, tile_x, tile_y)
+    
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_xlim(min_lon, max_lon)
+    ax.set_ylim(min_lat, max_lat)
+    ax.set_xlabel('Longitude')
+    ax.set_ylabel('Latitude')
+    ax.set_title('GNSS Trajectory Comparison')
+    ax.grid(True, alpha=0.3)
+    
+    # Background fallback
+    true_map_image = map_fetcher.get_map_image(true_uri)
+    height, width = 800, 800
+    if true_map_image is not None:
+        try:
+            true_map_img = plt.imread(io.BytesIO(true_map_image))
+            ax.imshow(true_map_img, extent=[min_lon, max_lon, min_lat, max_lat], aspect='equal')
+        except Exception as e:
+            logger.warning(f"Image load error: {e}. Using blank.")
+    if true_map_image is None:
+        blank_image = np.ones((height, width, 3))
+        ax.imshow(blank_image, extent=[min_lon, max_lon, min_lat, max_lat], aspect='equal')
+        ax.text(0.5, 0.98, 'Map tiles unavailable (network/offline fallback)', 
+                transform=ax.transAxes, ha='center', va='top', fontsize=10, color='gray')
+    
+    # Trajectories
+    if plot_mode in [MapPlotMode.TRUE, MapPlotMode.BOTH]:
+        ax.plot(df['truth_lon'], df['truth_lat'], 'g-', label='True Trajectory', linewidth=2, alpha=0.8)
+        ax.scatter(df['truth_lon'], df['truth_lat'], c='green', s=20, alpha=0.6)
+    
+    if plot_mode in [MapPlotMode.EST, MapPlotMode.BOTH]:
+        ax.plot(df['lon'], df['lat'], 'r--', label='Est Trajectory', linewidth=2, alpha=0.8)
+        ax.scatter(df['lon'], df['lat'], c='red', s=20, alpha=0.6)
+    
+    ax.legend()
+    plt.tight_layout()
+    save_path = result_dir / "gnss_trajectory_map.png"
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
+    plt.close()  # No show for batch
+    print(f"Map plot saved to {save_path}")

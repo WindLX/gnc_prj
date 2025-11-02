@@ -1,8 +1,10 @@
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="numpy.core.fromnumeric")
 from datetime import datetime
-
 import seaborn as sns
 import pandas as pd
 from tqdm import tqdm
+from pathlib import Path  # Added for Path handling
 
 from model import Vector3
 from utils import ecef_to_lla
@@ -10,22 +12,24 @@ from data_loader import DataLoader
 from estimation import PositionEstimation
 from evaluation import *
 
-
 if __name__ == "__main__":
-    file_index = 4
+    file_index = 0
     plot_show_flag = False
-    RAIM_flag      = True # Remember to set "enable_fault_detction = True" in estimation.py
+    RAIM_flag = True  # Remember to set "enable_fault_detection = True" in estimation.py
 
     data_loader = DataLoader("./data")
     trajectory = data_loader[file_index]
 
     if RAIM_flag:
-        result_dir = "./results_RAIM/" + str(file_index) + "/"
+        result_dir_str = "./results_RAIM/" + str(file_index) + "/"
     else:
-        result_dir = "./results/" + str(file_index) + "/"
+        result_dir_str = "./results/" + str(file_index) + "/"
+
+    result_dir = Path(result_dir_str)  # Convert to Path for mkdir safety
+    result_dir.mkdir(exist_ok=True, parents=True)  # Create dir early
 
     estimation = PositionEstimation(
-        trajectory, step=5, threshold=8, result_dir=result_dir
+        trajectory, step=5, threshold=8, result_dir=result_dir_str  # Pass str if Estimation expects it
     )
     observations = estimation.load_observation_data()
     head, navigations = estimation.load_navigation_data(observations[0][0])
@@ -125,7 +129,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(evaluation_results)
     sns.set_theme(style="whitegrid")
-    evalution(df, result_dir=result_dir)
+    evaluation(df, result_dir=result_dir)  # Fixed: Now Path object
 
     plot_error(df, result_dir=result_dir, plot_flag=plot_show_flag)
     plot_error_histograms(df, result_dir=result_dir, plot_flag=plot_show_flag)

@@ -1,7 +1,7 @@
 [project]
 name = "gnc_prj"
 version = "0.1.0"
-description = "Add your description here"
+description = "Python-based solution to analyze RINEX files from GNSS Logger App, generating 12 geospatial visualizations depicting the correlation between satellite distribution and delusion of precision."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
